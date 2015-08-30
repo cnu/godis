@@ -34,12 +34,9 @@ func (g Godis) Exists(keys ...string) int {
 
 // Del removes all keys if it exists and returns the number of keys removed
 func (g Godis) Del(keys ...string) int {
-	count := 0
+	count := g.Exists(keys...)
 	for _, key := range keys {
-		if g.Exists(key) == 1 {
-			count++
-			delete(g.db, key)
-		}
+		delete(g.db, key)
 	}
 	return count
 }
