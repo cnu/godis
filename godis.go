@@ -20,3 +20,12 @@ func (g Godis) Set(key string, value interface{}) string {
 func (g Godis) Get(key string) interface{} {
 	return g.db[key]
 }
+
+// Exists returns in a key exists or not in the DB
+func (g Godis) Exists(key string) bool {
+	if _, ok := g.db[key]; ok {
+		return true
+	}
+	return false
+
+}

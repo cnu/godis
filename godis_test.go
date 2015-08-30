@@ -55,3 +55,17 @@ func TestGetNotExists(t *testing.T) {
 		t.Errorf("Get(%q) == %v, want %v", key, got, nil)
 	}
 }
+
+func TestExists(t *testing.T) {
+	db := setUp()
+	key := "exists"
+	db.Set(key, "yes")
+	if got := db.Exists(key); !got {
+		t.Errorf("Exists(%q) == %v, want %v", key, got, true)
+	}
+
+	notExistsKey := "not-exists"
+	if got := db.Exists(notExistsKey); got {
+		t.Errorf("Exists(%q) == %v, want %v", notExistsKey, got, false)
+	}
+}
