@@ -58,16 +58,40 @@ func TestGetNotExists(t *testing.T) {
 
 func TestExists(t *testing.T) {
 	db := setUp()
-	key := "exists"
-	db.Set(key, "yes")
-	if got := db.Exists(key); !got {
-		t.Errorf("Exists(%q) == %v, want %v", key, got, true)
+	for _, c := range cases {
+		db.Set(c.key, c.value)
 	}
 
-	notExistsKey := "not-exists"
-	if got := db.Exists(notExistsKey); got {
-		t.Errorf("Exists(%q) == %v, want %v", notExistsKey, got, false)
+	// one existent key
+	key := "key1"
+	if got := db.Exists(key); got != 1 {
+		t.Errorf("Exists(%q) == %v, want %d", key, got, 1)
 	}
+
+	// one non-existent key
+	notExistsKey := "not-exists"
+	if got := db.Exists(notExistsKey); got != 0 {
+		t.Errorf("Exists(%q) == %v, want %v", notExistsKey, got, 0)
+	}
+
+	// all existent keys
+	keys := []string{"key1", "test_num", "key 3"}
+	if got := db.Exists(keys...); got != len(keys) {
+		t.Errorf("Exists(%q) == %d, want %d", keys, got, len(keys))
+	}
+
+	// two existent keys and one non-existent keys
+	keys = []string{"key1", "test_num", "foo"}
+	if got := db.Exists(keys...); got != 2 {
+		t.Errorf("Exists(%q) == %d, want %d", keys, got, 2)
+	}
+
+	// all non existent keys
+	keys = []string{"foo", "bar", "baz"}
+	if got := db.Exists(keys...); got != 0 {
+		t.Errorf("Exists(%q) == %d, want %d", keys, got, 0)
+	}
+
 }
 
 func TestDelete(t *testing.T) {

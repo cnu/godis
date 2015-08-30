@@ -22,19 +22,21 @@ func (g Godis) Get(key string) interface{} {
 }
 
 // Exists returns in a key exists or not in the DB
-func (g Godis) Exists(key string) bool {
-	if _, ok := g.db[key]; ok {
-		return true
+func (g Godis) Exists(keys ...string) int {
+	count := 0
+	for _, key := range keys {
+		if _, ok := g.db[key]; ok {
+			count++
+		}
 	}
-	return false
-
+	return count
 }
 
 // Del removes all keys if it exists and returns the number of keys removed
 func (g Godis) Del(keys ...string) int {
 	count := 0
 	for _, key := range keys {
-		if g.Exists(key) {
+		if g.Exists(key) == 1 {
 			count++
 			delete(g.db, key)
 		}
