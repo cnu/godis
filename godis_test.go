@@ -69,3 +69,46 @@ func TestExists(t *testing.T) {
 		t.Errorf("Exists(%q) == %v, want %v", notExistsKey, got, false)
 	}
 }
+
+func TestDelete(t *testing.T) {
+	db := setUp()
+	for _, c := range cases {
+		db.Set(c.key, c.value)
+	}
+
+	// Del a key which exists
+	key := "மொழி"
+	got := db.Del(key)
+	if got != 1 {
+		t.Errorf("Del(%q) == %d, want %d", key, got, 1)
+	}
+
+	// Del a key which doesn't exist
+	key = "foo"
+	got = db.Del(key)
+	if got != 0 {
+		t.Errorf("Del(%q) == %d, want %d", key, got, 0)
+	}
+
+	// Del a list of keys which all exist
+	removeKeys := []string{"key1", "test_num", "key 3"}
+	got = db.Del(removeKeys...)
+	if got != len(removeKeys) {
+		t.Errorf("Del(%q) == %d, want %d", removeKeys, got, len(removeKeys))
+	}
+
+	// Del a list of keys which has one non-existent key
+	removeKeys = []string{"key2", "tested", "not-exists"}
+	got = db.Del(removeKeys...)
+	if got != 2 {
+		t.Errorf("Del(%q) == %d, want %d", removeKeys, got, 2)
+	}
+
+	// Del a list of keys which has all non-existent keys
+	removeKeys = []string{"foo", "bar", "baz"}
+	got = db.Del(removeKeys...)
+	if got != 0 {
+		t.Errorf("Del(%q) == %d, want %d", removeKeys, got, 0)
+	}
+
+}
