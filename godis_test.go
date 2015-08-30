@@ -35,7 +35,7 @@ func TestSet(t *testing.T) {
 	}
 }
 
-// Test getting key-values to the DB
+// Test getting key-values from the DB
 func TestGet(t *testing.T) {
 	cases := []struct {
 		in  KV
@@ -57,5 +57,15 @@ func TestGet(t *testing.T) {
 		if got != c.out {
 			t.Errorf("Get(%q) == %q, want %q", c.in.key, got, c.out)
 		}
+	}
+}
+
+// Test getting non-existent key from the DB
+func TestGetNotExists(t *testing.T) {
+	db := setUp()
+	key := "not exists"
+	got := db.Get(key)
+	if got != nil {
+		t.Errorf("Get(%q) == %v, want %v", key, got, nil)
 	}
 }
