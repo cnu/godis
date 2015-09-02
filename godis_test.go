@@ -156,7 +156,7 @@ func BenchmarkGet(b *testing.B) {
 
 	// run the Get method b.N times
 	for n := 0; n < b.N; n++ {
-		_ = db.Get("key")
+		db.Get("key")
 	}
 }
 
@@ -168,7 +168,7 @@ func BenchmarkExists(b *testing.B) {
 
 	// run the Exists method b.N times
 	for n := 0; n < b.N; n++ {
-		_ = db.Exists("key")
+		db.Exists("key")
 	}
 }
 
@@ -181,6 +181,6 @@ func BenchmarkDel(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Not an accurate measure as we can't Del a key without setting it
 		db.Set("key", "value")
-		_ = db.Del("key")
+		db.Del("key")
 	}
 }
