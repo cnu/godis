@@ -6,20 +6,20 @@ func setUp() *Godis {
 	return New()
 }
 
-type KV struct {
+type Case struct {
 	key   string
 	value interface{}
 }
 
-var cases = []KV{
-	KV{"key1", "value1"},
-	KV{"key2", "value2"},
-	KV{"key 3", "value 3"},    // keys with spaces
-	KV{"மொழி", "தமிழ்"},       // unicode
-	KV{"key1", "new value 1"}, // overwrite a key
-	KV{"tested", true},        // boolean value
-	KV{"test_num", 7},         // int value
-	KV{"PI", 3.14},            // float value
+var cases = []Case{
+	{"key1", "value1"},
+	{"key2", "value2"},
+	{"key 3", "value 3"},    // keys with spaces
+	{"மொழி", "தமிழ்"},       // unicode
+	{"key1", "new value 1"}, // overwrite a key
+	{"tested", true},        // boolean value
+	{"test_num", 7},         // int value
+	{"PI", 3.14},            // float value
 }
 
 // Test setting key-values to the DB
