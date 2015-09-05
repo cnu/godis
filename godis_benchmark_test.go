@@ -2,50 +2,50 @@ package godis
 
 import "testing"
 
-// Benchmark for Set method
-func BenchmarkSet(b *testing.B) {
+// Benchmark for SET method
+func BenchmarkSET(b *testing.B) {
 	db := setUp()
 	b.ResetTimer()
 
-	// run the Set method b.N times
+	// run the SET method b.N times
 	for n := 0; n < b.N; n++ {
-		db.Set("key", "value")
+		db.SET("key", "value")
 	}
 }
 
-// Benchmark for Get method
-func BenchmarkGet(b *testing.B) {
+// Benchmark for GET method
+func BenchmarkGET(b *testing.B) {
 	db := setUp()
-	db.Set("key", "value")
+	db.SET("key", "value")
 	b.ResetTimer()
 
-	// run the Get method b.N times
+	// run the GET method b.N times
 	for n := 0; n < b.N; n++ {
-		_ = db.Get("key")
+		_ = db.GET("key")
 	}
 }
 
-// Benchmark for Exists method
-func BenchmarkExists(b *testing.B) {
+// Benchmark for EXISTS method
+func BenchmarkEXISTS(b *testing.B) {
 	db := setUp()
-	db.Set("key", "value")
+	db.SET("key", "value")
 	b.ResetTimer()
 
-	// run the Exists method b.N times
+	// run the EXISTS method b.N times
 	for n := 0; n < b.N; n++ {
-		_ = db.Exists("key")
+		_ = db.EXISTS("key")
 	}
 }
 
-// Benchmark for Del method
-func BenchmarkDel(b *testing.B) {
+// Benchmark for DEL method
+func BenchmarkDEL(b *testing.B) {
 	db := setUp()
 	b.ResetTimer()
 
-	// Set a key and Del method b.N times
+	// SET a key and DEL method b.N times
 	for n := 0; n < b.N; n++ {
-		// Not an accurate measure as we can't Del a key without setting it
-		db.Set("key", "value")
-		_ = db.Del("key")
+		// Not an accurate measure as we can't DEL a key without setting it
+		db.SET("key", "value")
+		_ = db.DEL("key")
 	}
 }
