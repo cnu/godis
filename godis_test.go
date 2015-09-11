@@ -1,6 +1,9 @@
 package godis
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func setUp() *Godis {
 	return New()
@@ -20,6 +23,22 @@ var cases = []Case{
 	{"tested", true},        // boolean value
 	{"test_num", 7},         // int value
 	{"PI", 3.14},            // float value
+}
+
+var integers = []Case{
+	{"int", 234},
+	{"long", 223344231},
+	//{"bool", true}, // boolean value
+	{"negative", -554},
+}
+
+var floats = []Case{
+	{"float64", 22423234.1223},
+	{"float", 443.21},
+}
+
+var strings = []Case{
+	{"மொழி", "தமிழ்"}, // value with string
 }
 
 // Test setting key-values to the DB
@@ -135,4 +154,71 @@ func TestDEL(t *testing.T) {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 0)
 	}
 
+}
+
+// Test incrementing values for given key by 1
+func TestINCR(t *testing.T) {
+	db := setUp()
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got := db.INCR(c.key)
+		if got != c.value.(int)+1 {
+			t.Errorf("INCR(%q) == %d, want %d", c.key, got, c.value.(int)+1)
+		}
+	}
+}
+
+// Test decrementing values for given key by 1
+func TestDECR(t *testing.T) {
+	db := setUp()
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got := db.DECR(c.key)
+		if got != c.value.(int)-1 {
+			t.Errorf("DECR(%q) == %d, want %d", c.key, got, c.value.(int)-1)
+		}
+	}
+}
+
+// Test incrementing values for given key by n
+func TestINCRBY(t *testing.T) {
+	db := setUp()
+	n := 3
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got := db.INCRBY(c.key, n)
+		if got != c.value.(int)+n {
+			t.Errorf("INCRBY(%q) == %d, want %d", c.key, got, c.value.(int)+n)
+		}
+	}
+}
+
+// Test decrementing values for given key by n
+func TestDECRBY(t *testing.T) {
+	db := setUp()
+	n := 3
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got := db.DECRBY(c.key, n)
+		if got != c.value.(int)-n {
+			t.Errorf("DECRBY(%q) == %d, want %d", c.key, got, c.value.(int)-n)
+		}
+	}
+}
+
+// Test incrementing values for given key by 1
+func TestINCRmismatchs(t *testing.T) {
+	db := setUp()
+	n := 1
+	for _, c := range strings {
+		db.SET(c.key, c.value)
+		got := db.INCR(c.key)
+		_, ok := c.value.(int)
+		//if ok && got != value+n {
+		//	t.Errorf("INCR(%q) == %d, want %d", c.key, got, value+n)
+		//}
+		if !ok {
+			t.Errorf("INCR(%q) got type %v, want type %v", c.key, reflect.TypeOf(got), reflect.TypeOf(n))
+		}
+	}
 }
