@@ -1,7 +1,6 @@
 package godis
 
 import (
-	"reflect"
 	"testing"
 )
 
