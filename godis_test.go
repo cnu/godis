@@ -29,6 +29,7 @@ var integers = []Case{
 	{"long", 223344231},
 	//{"bool", true}, // boolean value
 	{"negative", -554},
+	{"zero", 0},
 }
 
 var floats = []Case{
@@ -167,6 +168,15 @@ func TestINCR(t *testing.T) {
 	}
 }
 
+// Test incrementing non-existent keys
+func TestINCRNonExists(t *testing.T) {
+	db := setUp()
+	got := db.INCR("non-incr-key")
+	if got != 1 {
+		t.Errorf("INCR(%q) == %d, want %d", "non-incr-key", got, 1)
+	}
+}
+
 // Test decrementing values for given key by 1
 func TestDECR(t *testing.T) {
 	db := setUp()
@@ -176,6 +186,15 @@ func TestDECR(t *testing.T) {
 		if got != c.value.(int)-1 {
 			t.Errorf("DECR(%q) == %d, want %d", c.key, got, c.value.(int)-1)
 		}
+	}
+}
+
+// Test incrementing non-existent keys
+func TestDECRNonExists(t *testing.T) {
+	db := setUp()
+	got := db.DECR("non-decr-key")
+	if got != -1 {
+		t.Errorf("DECR(%q) == %d, want %d", "non-decr-key", got, -1)
 	}
 }
 

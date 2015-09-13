@@ -13,48 +13,30 @@ func (g Godis) GET(key string) interface{} {
 
 // INCR increments the key by one
 func (g Godis) INCR(key string) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val + 1
-		return g.GET(key)
-	} else {
-		g.SET(key, -1)
-		return g.GET(key)
-	}
+	return g.INCRBY(key, 1)
 }
 
 // DECR decrements the key by one
 func (g Godis) DECR(key string) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val - 1
-		return g.GET(key)
-	} else {
-		g.SET(key, -1)
-		return g.GET(key)
-	}
+	return g.DECRBY(key, 1)
 }
 
 // INCRBY increments the key by given value
 func (g Godis) INCRBY(key string, n int) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val + n
-		return g.GET(key)
-	} else {
-		g.SET(key, n)
-		return g.GET(key)
+	if g.EXISTS(key) == 0 {
+		g.SET(key, 0)
 	}
+	val := g.GET(key).(int)
+	g.SET(key, val+n)
+	return g.GET(key)
 }
 
 // DECRBY decrements the key by given value
 func (g Godis) DECRBY(key string, n int) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val - n
-		return g.GET(key)
-	} else {
-		g.SET(key, n)
-		return g.GET(key)
+	if g.EXISTS(key) == 0 {
+		g.SET(key, 0)
 	}
+	val := g.GET(key).(int)
+	g.SET(key, val-n)
+	return g.GET(key)
 }
