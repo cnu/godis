@@ -206,7 +206,7 @@ func TestDECRBY(t *testing.T) {
 	}
 }
 
-// Test incrementing values for given key by 1
+/* Test incrementing values for given key by 1
 func TestINCRmismatchs(t *testing.T) {
 	db := setUp()
 	n := 1
@@ -221,4 +221,4 @@ func TestINCRmismatchs(t *testing.T) {
 			t.Errorf("INCR(%q) got type %v, want type %v", c.key, reflect.TypeOf(got), reflect.TypeOf(n))
 		}
 	}
-}
+}*/
