@@ -40,3 +40,26 @@ func (g Godis) DECRBY(key string, n int) interface{} {
 	g.SET(key, val-n)
 	return g.GET(key)
 }
+
+// MGET returns a slice of values for a input slice of keys
+func (g Godis) MGET(keys ...string) []interface{} {
+	var output []interface{}
+	for _, key := range keys {
+		value := g.GET(key)
+		output = append(output, value)
+	}
+	return output
+}
+
+// MSET sets a slice of key-values
+// pass a slice of keys and value alternating
+// eg: "key1", "value1", "key2", "value2"
+func (g Godis) MSET(items ...string) bool {
+	for i, item := range items {
+		if i%2 == 1 {
+			continue
+		}
+		g.SET(item, items[i+1])
+	}
+	return true
+}

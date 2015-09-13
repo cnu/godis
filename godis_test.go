@@ -153,7 +153,68 @@ func TestDEL(t *testing.T) {
 	if got != 0 {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 0)
 	}
+}
 
+// Test MGETting key-values from the DB
+func TestMGET(t *testing.T) {
+	testKeys := []string{"key1", "key2", "key 3"}
+	want := []string{"new value 1", "value2", "value 3"}
+	db := setUp()
+	for _, c := range cases {
+		db.SET(c.key, c.value)
+	}
+	got := db.MGET(testKeys...)
+	for i, key := range testKeys {
+		if got[i] != want[i] {
+			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
+		}
+	}
+}
+
+// Test MGETting non-existent key-values from the DB
+func TestMGETNotExists(t *testing.T) {
+	testKeys := []string{"non-key1", "non-key2", "non-key3"}
+	db := setUp()
+	for _, c := range cases {
+		db.SET(c.key, c.value)
+	}
+	got := db.MGET(testKeys...)
+	for i, key := range testKeys {
+		if got[i] != nil {
+			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
+		}
+	}
+
+}
+
+// Test MGETting few non-existent key-values from the DB
+func TestMGETFewNotExists(t *testing.T) {
+	testKeys := []string{"key1", "non-key2", "key 3"}
+	want := []string{"new value 1", "value2", "value 3"}
+	db := setUp()
+	for _, c := range cases {
+		db.SET(c.key, c.value)
+	}
+	got := db.MGET(testKeys...)
+	for i, key := range testKeys {
+		if i == 1 && got[i] != nil {
+			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
+		}
+		if i != 1 && got[i] != want[i] {
+			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
+		}
+	}
+
+}
+
+// Test MSETing key-values pairs into the DB
+func TestMSET(t *testing.T) {
+	tests := []string{"key1", "value1", "key2", "value2", "key3", "value3"}
+	db := setUp()
+	got := db.MSET(tests...)
+	if got != true {
+		t.Errorf("MSET(%q) == %t, want %t", tests, got, true)
+	}
 }
 
 // Test incrementing values for given key by 1
