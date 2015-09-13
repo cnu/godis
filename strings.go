@@ -13,48 +13,53 @@ func (g Godis) GET(key string) interface{} {
 
 // INCR increments the key by one
 func (g Godis) INCR(key string) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val + 1
-		return g.GET(key)
-	} else {
-		g.SET(key, -1)
-		return g.GET(key)
-	}
+	return g.INCRBY(key, 1)
 }
 
 // DECR decrements the key by one
 func (g Godis) DECR(key string) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val - 1
-		return g.GET(key)
-	} else {
-		g.SET(key, -1)
-		return g.GET(key)
-	}
+	return g.DECRBY(key, 1)
 }
 
 // INCRBY increments the key by given value
 func (g Godis) INCRBY(key string, n int) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val + n
-		return g.GET(key)
-	} else {
-		g.SET(key, n)
-		return g.GET(key)
+	if g.EXISTS(key) == 0 {
+		g.SET(key, 0)
 	}
+	val := g.GET(key).(int)
+	g.SET(key, val+n)
+	return g.GET(key)
 }
 
 // DECRBY decrements the key by given value
 func (g Godis) DECRBY(key string, n int) interface{} {
-	if g.EXISTS(key) == 1 {
-		val := g.db[key].(int)
-		g.db[key] = val - n
-		return g.GET(key)
-	} else {
-		g.SET(key, n)
-		return g.GET(key)
+	if g.EXISTS(key) == 0 {
+		g.SET(key, 0)
 	}
+	val := g.GET(key).(int)
+	g.SET(key, val-n)
+	return g.GET(key)
+}
+
+// MGET returns a slice of values for a input slice of keys
+func (g Godis) MGET(keys ...string) []interface{} {
+	var output []interface{}
+	for _, key := range keys {
+		value := g.GET(key)
+		output = append(output, value)
+	}
+	return output
+}
+
+// MSET sets a slice of key-values
+// pass a slice of keys and value alternating
+// eg: "key1", "value1", "key2", "value2"
+func (g Godis) MSET(items ...string) bool {
+	for i, item := range items {
+		if i%2 == 1 {
+			continue
+		}
+		g.SET(item, items[i+1])
+	}
+	return true
 }
