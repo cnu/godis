@@ -17,7 +17,7 @@ func (g Godis) GET(key string) interface{} {
 func (g Godis) destroyInSecs(key string, exp int64) int {
 	var i int64 = 0
 	for i = 0; i < exp; i++ {
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(time.Second)
 	}
 	return g.DEL(key)
 }
