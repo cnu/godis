@@ -2,6 +2,7 @@ package godis
 
 import (
 	"testing"
+	"time"
 )
 
 func setUp() *Godis {
@@ -301,3 +302,17 @@ func TestINCRmismatchs(t *testing.T) {
 		}
 	}
 }*/
+
+func TestSETEXWithinExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 10
+	db := setUp()
+	db.SETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp-1) * time.Second)
+	got := db.GET(key)
+	if got != val {
+		t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
+	}
+}
