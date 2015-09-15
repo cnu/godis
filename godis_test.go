@@ -316,3 +316,17 @@ func TestSETEXWithinExp(t *testing.T) {
 		t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
 	}
 }
+
+func TestSETEXafterExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 10
+	db := setUp()
+	db.SETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp+1) * time.Second)
+	got := db.GET(key)
+	if got != nil {
+		t.Errorf("SETEX(%q) == %d, want nil", key, got)
+	}
+}
