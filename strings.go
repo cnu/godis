@@ -14,7 +14,7 @@ func (g Godis) GET(key string) interface{} {
 }
 
 // Internal function to destroy a key after given time in seconds
-func (g Godis) destroyKey(key string, exp int64) int {
+func (g Godis) destroyInSecs(key string, exp int64) int {
 	var i int64 = 0
 	for i = 0; i < exp; i++ {
 		time.Sleep(1000 * time.Millisecond)
