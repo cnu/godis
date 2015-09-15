@@ -22,6 +22,15 @@ func (g Godis) destroyInSecs(key string, exp int64) int {
 	return g.DEL(key)
 }
 
+// Internal function to destroy a key after given time in milliseconds
+func (g Godis) destroyInMillis(key string, exp int64) int {
+	var i int64 = 0
+	for i = 0; i < exp; i++ {
+		time.Sleep(time.Millisecond)
+	}
+	return g.DEL(key)
+}
+
 /* SETEX is used to assign a value to a key and destroy it within its given
 expiry time in seconds*/
 func (g Godis) SETEX(key string, exp int64, value interface{}) string {
