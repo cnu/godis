@@ -1,6 +1,9 @@
 package godis
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 // Test setting key-values to the DB
 func TestSET(t *testing.T) {
@@ -184,29 +187,29 @@ func TestINCRmismatchs(t *testing.T) {
 }*/
 
 func TestSETEXWithinExp(t *testing.T) {
-        // One second before expiry time
-        key := "mykey"
-        val := 25
-        exp := 10
-        db := setUp()
-        db.SETEX(key, int64(exp), val)
-        time.Sleep(time.Duration(exp-1) * time.Second)
-        got := db.GET(key)
-        if got != val {
-                t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
-        }
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 10
+	db := setUp()
+	db.SETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp-1) * time.Second)
+	got := db.GET(key)
+	if got != val {
+		t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
+	}
 }
 
 func TestSETEXAfterExp(t *testing.T) {
-        // One second before expiry time
-        key := "mykey"
-        val := 25
-        exp := 10
-        db := setUp()
-        db.SETEX(key, int64(exp), val)
-        time.Sleep(time.Duration(exp+1) * time.Second)
-        got := db.GET(key)
-        if got != nil {
-                t.Errorf("SETEX(%q) == %d, want nil", key, got)
-        }
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 10
+	db := setUp()
+	db.SETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp+1) * time.Second)
+	got := db.GET(key)
+	if got != nil {
+		t.Errorf("SETEX(%q) == %d, want nil", key, got)
+	}
 }
