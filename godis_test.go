@@ -317,7 +317,7 @@ func TestSETEXWithinExp(t *testing.T) {
 	}
 }
 
-func TestSETEXafterExp(t *testing.T) {
+func TestSETEXAfterExp(t *testing.T) {
 	// One second before expiry time
 	key := "mykey"
 	val := 25
