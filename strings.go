@@ -60,15 +60,21 @@ func (g Godis) GET(key string) (string, bool) {
 // 	return g.GET(key)
 // }
 
-// // MGET returns a slice of values for a input slice of keys
-// func (g Godis) MGET(keys ...string) []interface{} {
-// 	var output []interface{}
-// 	for _, key := range keys {
-// 		value := g.GET(key)
-// 		output = append(output, value)
-// 	}
-// 	return output
-// }
+// MGET returns a slice of values for a input slice of keys
+func (g Godis) MGET(keys ...string) []interface{} {
+	var output []interface{} // will be strings or nils
+	for _, key := range keys {
+		value, err := g.GET(key)
+		if !err {
+			output = append(output, value)
+		} else {
+			// if the key isn't available, append a nil instead
+			// TODO: how to do multi-return way if we have a slice to return?
+			output = append(output, nil)
+		}
+	}
+	return output
+}
 
 // // MSET sets a slice of key-values
 // // pass a slice of keys and value alternating
