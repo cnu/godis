@@ -21,13 +21,13 @@ func TestEXISTS(t *testing.T) {
 	}
 
 	// all existent keys
-	keys := []string{"key1", "test_num", "key 3"}
+	keys := []string{"key1", "key2", "key 3"}
 	if got := db.EXISTS(keys...); got != len(keys) {
 		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, len(keys))
 	}
 
 	// two existent keys and one non-existent keys
-	keys = []string{"key1", "test_num", "foo"}
+	keys = []string{"key1", "key2", "foo"}
 	if got := db.EXISTS(keys...); got != 2 {
 		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, 2)
 	}
@@ -61,17 +61,17 @@ func TestDEL(t *testing.T) {
 	}
 
 	// DEL a list of keys which all exist
-	removeKeys := []string{"key1", "test_num", "key 3"}
+	removeKeys := []string{"key1", "key 3"}
 	got = db.DEL(removeKeys...)
 	if got != len(removeKeys) {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, len(removeKeys))
 	}
 
 	// DEL a list of keys which has one non-existent key
-	removeKeys = []string{"key2", "tested", "not-exists"}
+	removeKeys = []string{"key2", "not-exists"}
 	got = db.DEL(removeKeys...)
-	if got != 2 {
-		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 2)
+	if got != 1 {
+		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 1)
 	}
 
 	// DEL a list of keys which has all non-existent keys

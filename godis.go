@@ -2,10 +2,10 @@ package godis
 
 // Godis is the actual in memory DB
 type Godis struct {
-	db map[string]interface{}
+	db map[string]*SDS
 }
 
-// New returns a reference to a new empty Godis object
-func New() *Godis {
-	return &Godis{make(map[string]interface{})}
+// NewGodis returns a reference to a new empty Godis object
+func NewGodis() *Godis {
+	return &Godis{make(map[string]*SDS)}
 }
