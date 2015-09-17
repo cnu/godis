@@ -307,7 +307,7 @@ func TestSETEXWithinExp(t *testing.T) {
 	// One second before expiry time
 	key := "mykey"
 	val := 25
-	exp := 10
+	exp := 3
 	db := setUp()
 	db.SETEX(key, int64(exp), val)
 	time.Sleep(time.Duration(exp-1) * time.Second)
@@ -321,7 +321,7 @@ func TestSETEXAfterExp(t *testing.T) {
 	// One second before expiry time
 	key := "mykey"
 	val := 25
-	exp := 10
+	exp := 3
 	db := setUp()
 	db.SETEX(key, int64(exp), val)
 	time.Sleep(time.Duration(exp+1) * time.Second)
