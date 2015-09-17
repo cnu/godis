@@ -19,3 +19,19 @@ func (g Godis) DEL(keys ...string) int {
 	}
 	return count
 }
+
+// RENAME renames a key to newkey. Returns an error when the source
+// and destination names are the same, or when key does not exist. If new key
+// already exists it is overwritten.
+func (g Godis) RENAME(key, newKey string) interface{} {
+	if key != newKey || g.EXISTS(key) != 0 {
+		if g.EXISTS(newKey) > 0 {
+			g.DEL(newKey)
+		}
+		val := g.GET(key)
+		g.DEL(key)
+		return g.SET(newKey, val)
+	} else {
+		return false
+	}
+}
