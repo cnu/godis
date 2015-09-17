@@ -15,26 +15,20 @@ func (g Godis) GET(key string) interface{} {
 
 // Internal function to destroy a key after given time in seconds
 func (g Godis) destroyInSecs(key string, exp int64) int {
-	var i int64 = 0
-	for i = 0; i < exp; i++ {
-		time.Sleep(time.Second)
-	}
+	time.Sleep(time.Duration(exp) * time.Second)
 	return g.DEL(key)
 }
 
 // Internal function to destroy a key after given time in milliseconds
 func (g Godis) destroyInMillis(key string, exp int64) int {
-	var i int64 = 0
-	for i = 0; i < exp; i++ {
-		time.Sleep(time.Millisecond)
-	}
+	time.Sleep(time.Duration(exp) * time.Millisecond)
 	return g.DEL(key)
 }
 
 /* SETEX is used to assign a value to a key and destroy it within its given
 expiry time in seconds*/
 func (g Godis) SETEX(key string, exp int64, value interface{}) string {
-	g.SET(value)
+	g.SET(key, value)
 	go g.destroyInSecs(key, exp)
 	return key
 }
@@ -42,7 +36,7 @@ func (g Godis) SETEX(key string, exp int64, value interface{}) string {
 /* PSETEX is used to assign a value to a key and destroy it within its given
 expiry time in milliseconds*/
 func (g Godis) PSETEX(key string, exp int64, value interface{}) string {
-	g.SET(value)
+	g.SET(key, value)
 	go g.destroyInMillis(key, exp)
 	return key
 }
