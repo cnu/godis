@@ -87,15 +87,15 @@ func TestMGETFewNotExists(t *testing.T) {
 	}
 }
 
-// // Test MSETing key-values pairs into the DB
-// func TestMSET(t *testing.T) {
-// 	tests := []string{"key1", "value1", "key2", "value2", "key3", "value3"}
-// 	db := setUp()
-// 	got := db.MSET(tests...)
-// 	if got != true {
-// 		t.Errorf("MSET(%q) == %t, want %t", tests, got, true)
-// 	}
-// }
+// Test MSETing key-values pairs into the DB
+func TestMSET(t *testing.T) {
+	tests := []string{"key1", "value1", "key2", "value2", "key3", "value3"}
+	db := setUp()
+	got := db.MSET(tests...)
+	if got != true {
+		t.Errorf("MSET(%q) == %t, want %t", tests, got, true)
+	}
+}
 
 // // Test incrementing values for given key by 1
 // func TestINCR(t *testing.T) {
