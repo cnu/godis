@@ -81,3 +81,99 @@ func TestDEL(t *testing.T) {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 0)
 	}
 }
+
+// Test RENAME with different key and newKey
+func TestRENAME(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	res := db.RENAME(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	}
+}
+
+// Test RENAME when key and newKey are same
+func TestRENAMESameKeys(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "myKey"
+	db.SET(key, "value")
+	res := db.RENAME(key, newKey)
+	if res != false {
+		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAME when given key doesn't exist
+func TestRENAMENonExistant(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	res := db.RENAME(key, newKey)
+	if res != false {
+		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAME when newKey exists
+func TestRENAMENewKeyExist(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	db.SET(newKey, "somevalue")
+	res := db.RENAME(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	}
+}
+
+// Test RENAMENX with different key and newKey
+func TestRENAMENX(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	res := db.RENAMENX(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	}
+}
+
+// Test RENAMENX when key and newKey are same
+func TestRENAMENXSameKeys(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "myKey"
+	db.SET(key, "value")
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAMENX when given key doesn't exist
+func TestRENAMENXNonExistant(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAMENX when newKey exists
+func TestRENAMENXNewKeyExist(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	db.SET(newKey, "somevalue")
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
