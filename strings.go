@@ -1,5 +1,7 @@
 package godis
 
+import "strconv"
+
 func (g *Godis) getSDS(key string) (*SDS, bool) {
 	s, exists := g.db[key]
 	return s, exists
@@ -30,25 +32,32 @@ func (g *Godis) GET(key string) (string, bool) {
 	return "", true
 }
 
-// // INCR increments the key by one
-// func (g Godis) INCR(key string) interface{} {
-// 	return g.INCRBY(key, 1)
-// }
+// INCR increments the key by one
+func (g *Godis) INCR(key string) (string, bool) {
+	return g.INCRBY(key, 1)
+}
 
 // // DECR decrements the key by one
 // func (g Godis) DECR(key string) interface{} {
 // 	return g.DECRBY(key, 1)
 // }
 
-// // INCRBY increments the key by given value
-// func (g Godis) INCRBY(key string, n int) interface{} {
-// 	if g.EXISTS(key) == 0 {
-// 		g.SET(key, 0)
-// 	}
-// 	val := g.GET(key).(int)
-// 	g.SET(key, val+n)
-// 	return g.GET(key)
-// }
+// INCRBY increments the key by given value
+func (g *Godis) INCRBY(key string, n int) (string, bool) {
+	if g.EXISTS(key) == 0 {
+		g.SET(key, "0")
+	}
+	val, err := g.GET(key)
+	if !err {
+		valInt, convErr := strconv.Atoi(val)
+		if convErr == nil {
+			valInt += n
+			g.SET(key, strconv.Itoa(valInt))
+			return strconv.Itoa(valInt), false
+		}
+	}
+	return "", true
+}
 
 // // DECRBY decrements the key by given value
 // func (g Godis) DECRBY(key string, n int) interface{} {

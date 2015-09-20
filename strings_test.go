@@ -1,6 +1,9 @@
 package godis
 
-import "testing"
+import (
+	"strconv"
+	"testing"
+)
 
 // Test setting key-values to the DB
 func TestSET(t *testing.T) {
@@ -97,26 +100,28 @@ func TestMSET(t *testing.T) {
 	}
 }
 
-// // Test incrementing values for given key by 1
-// func TestINCR(t *testing.T) {
-// 	db := setUp()
-// 	for _, c := range integers {
-// 		db.SET(c.key, c.value)
-// 		got := db.INCR(c.key)
-// 		if got != c.value.(int)+1 {
-// 			t.Errorf("INCR(%q) == %d, want %d", c.key, got, c.value.(int)+1)
-// 		}
-// 	}
-// }
+// Test incrementing values for given key by 1
+func TestINCR(t *testing.T) {
+	db := setUp()
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got, _ := db.INCR(c.key)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want + 1)
+		if got != wantStr {
+			t.Errorf("INCR(%q) == %s, want %s", c.key, got, wantStr)
+		}
+	}
+}
 
-// // Test incrementing non-existent keys
-// func TestINCRNonExists(t *testing.T) {
-// 	db := setUp()
-// 	got := db.INCR("non-incr-key")
-// 	if got != 1 {
-// 		t.Errorf("INCR(%q) == %d, want %d", "non-incr-key", got, 1)
-// 	}
-// }
+// Test incrementing non-existent keys
+func TestINCRNonExists(t *testing.T) {
+	db := setUp()
+	got, _ := db.INCR("non-incr-key")
+	if got != "1" {
+		t.Errorf("INCR(%q) == %s, want %s", "non-incr-key", got, "1")
+	}
+}
 
 // // Test decrementing values for given key by 1
 // func TestDECR(t *testing.T) {
@@ -139,18 +144,32 @@ func TestMSET(t *testing.T) {
 // 	}
 // }
 
-// // Test incrementing values for given key by n
-// func TestINCRBY(t *testing.T) {
-// 	db := setUp()
-// 	n := 3
-// 	for _, c := range integers {
-// 		db.SET(c.key, c.value)
-// 		got := db.INCRBY(c.key, n)
-// 		if got != c.value.(int)+n {
-// 			t.Errorf("INCRBY(%q) == %d, want %d", c.key, got, c.value.(int)+n)
-// 		}
-// 	}
-// }
+// Test incrementing values for given key by n
+func TestINCRBY(t *testing.T) {
+	db := setUp()
+	n := 3
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got, _ := db.INCRBY(c.key, n)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want + n)
+		if got != wantStr {
+			t.Errorf("INCRBY(%q) == %s, want %s", c.key, got, wantStr)
+		}
+	}
+}
+
+// Test incrementing values for a string value
+func TestINCRBYString(t *testing.T) {
+	db := setUp()
+	n := 3
+	key := "foo"
+	db.SET(key, "string value")
+	_, err := db.INCRBY(key, n)
+	if !err {
+		t.Errorf("INCRBY(%q, %d) == %t, want %t", key, n, err, true)
+	}
+}
 
 // // Test decrementing values for given key by n
 // func TestDECRBY(t *testing.T) {

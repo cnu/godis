@@ -21,13 +21,12 @@ var cases = []Case{
 	*/
 }
 
-// var integers = []Case{
-// 	{"int", 234},
-// 	{"long", 223344231},
-// 	//{"bool", true}, // boolean value
-// 	{"negative", -554},
-// 	{"zero", 0},
-// }
+var integers = []Case{
+	{"int", "234"},
+	{"long", "223344231"},
+	{"negative", "-554"},
+	{"zero", "0"},
+}
 
 // var floats = []Case{
 // 	{"float64", 22423234.1223},
