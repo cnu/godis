@@ -1,5 +1,7 @@
 package godis
 
+import "time"
+
 // SET is used to assign a value to a key
 func (g Godis) SET(key string, value interface{}) string {
 	g.db[key] = value
@@ -9,6 +11,40 @@ func (g Godis) SET(key string, value interface{}) string {
 // GET returns the value stored for a key
 func (g Godis) GET(key string) interface{} {
 	return g.db[key]
+}
+
+// Destroy a key after given time in seconds
+func (g Godis) destroyInSecs(key string, exp int64) int {
+	time.Sleep(time.Duration(exp) * time.Second)
+	return g.DEL(key)
+}
+
+// Destroy a key after given time in milliseconds
+func (g Godis) destroyInMillis(key string, exp int64) int {
+	time.Sleep(time.Duration(exp) * time.Millisecond)
+	return g.DEL(key)
+}
+
+// SETEX is used to assign a value to a key and destroy it within its given
+//expiry time in seconds
+func (g Godis) SETEX(key string, exp int64, value interface{}) interface{} {
+	if exp <= 0 {
+		return false
+	}
+	g.SET(key, value)
+	go g.destroyInSecs(key, exp)
+	return key
+}
+
+// PSETEX is used to assign a value to a key and destroy it within its given
+// expiry time in milliseconds
+func (g Godis) PSETEX(key string, exp int64, value interface{}) interface{} {
+	if exp <= 0 {
+		return false
+	}
+	g.SET(key, value)
+	go g.destroyInMillis(key, exp)
+	return key
 }
 
 // INCR increments the key by one

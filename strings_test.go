@@ -1,6 +1,9 @@
 package godis
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 // Test setting key-values to the DB
 func TestSET(t *testing.T) {
@@ -182,3 +185,108 @@ func TestINCRmismatchs(t *testing.T) {
         }
     }
 }*/
+
+func TestSETEXWithinExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 2
+	db := setUp()
+	db.SETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp-1) * time.Second)
+	got := db.GET(key)
+	if got != val {
+		t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
+	}
+}
+
+func TestSETEXAfterExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 1
+	db := setUp()
+	db.SETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp+1) * time.Second)
+	got := db.GET(key)
+	if got != nil {
+		t.Errorf("SETEX(%q) == %d, want nil", key, got)
+	}
+}
+
+func TestSETEXWithZero(t *testing.T) {
+	// Zero as expiry time
+	key := "mykey"
+	val := 25
+	exp := 0
+	db := setUp()
+	res := db.SETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
+
+func TestSETEXNegative(t *testing.T) {
+	// negative valuse as expiry time
+	key := "mykey"
+	val := 25
+	exp := -1
+	db := setUp()
+	res := db.SETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
+
+func TestPSETEXWithinExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 1000
+	db := setUp()
+	db.PSETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp-1) * time.Millisecond)
+	got := db.GET(key)
+	if got != val {
+		t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
+	}
+}
+
+func TestPSETEXAfterExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 1000
+	db := setUp()
+	db.PSETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp+1) * time.Millisecond)
+	got := db.GET(key)
+	if got != nil {
+		t.Errorf("SETEX(%q) == %d, want nil", key, got)
+	}
+}
+
+func TestPSETEXWithZero(t *testing.T) {
+	// Zero as expiry time
+	key := "mykey"
+	val := 25
+	exp := 0
+	db := setUp()
+	res := db.PSETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
+
+func TestPSETEXNegative(t *testing.T) {
+	// negative valuse as expiry time
+	key := "mykey"
+	val := 25
+	exp := -1
+	db := setUp()
+	res := db.PSETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
+
