@@ -266,5 +266,27 @@ func TestPSETEXAfterExp(t *testing.T) {
 	}
 }
 
+func TestPSETEXWithZero(t *testing.T) {
+	// Zero as expiry time
+	key := "mykey"
+	val := 25
+	exp := 0
+	db := setUp()
+	res := db.PSETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
 
+func TestPSETEXNegative(t *testing.T) {
+	// negative valuse as expiry time
+	key := "mykey"
+	val := 25
+	exp := -1
+	db := setUp()
+	res := db.PSETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
 
