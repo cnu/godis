@@ -1,6 +1,9 @@
 package godis
 
-import "strconv"
+import (
+	"strconv"
+	"time"
+)
 
 func (g *Godis) getSDS(key string) (*SDS, bool) {
 	s, exists := g.db[key]
@@ -30,6 +33,40 @@ func (g *Godis) GET(key string) (string, bool) {
 		return s.get(), false
 	}
 	return "", true
+}
+
+// Destroy a key after given time in seconds
+func (g *Godis) destroyInSecs(key string, exp int64) int {
+	time.Sleep(time.Duration(exp) * time.Second)
+	return g.DEL(key)
+}
+
+// Destroy a key after given time in milliseconds
+func (g *Godis) destroyInMillis(key string, exp int64) int {
+	time.Sleep(time.Duration(exp) * time.Millisecond)
+	return g.DEL(key)
+}
+
+// SETEX is used to assign a value to a key and destroy it within its given
+//expiry time in seconds
+func (g *Godis) SETEX(key string, exp int64, value string) interface{} {
+	if exp <= 0 {
+		return false
+	}
+	g.SET(key, value)
+	go g.destroyInSecs(key, exp)
+	return key
+}
+
+// PSETEX is used to assign a value to a key and destroy it within its given
+// expiry time in milliseconds
+func (g *Godis) PSETEX(key string, exp int64, value string) interface{} {
+	if exp <= 0 {
+		return false
+	}
+	g.SET(key, value)
+	go g.destroyInMillis(key, exp)
+	return key
 }
 
 // INCR increments the key by one
