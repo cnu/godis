@@ -237,3 +237,34 @@ func TestSETEXNegative(t *testing.T) {
 		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
 	}
 }
+
+func TestPSETEXWithinExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 1000
+	db := setUp()
+	db.PSETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp-1) * time.Millisecond)
+	got := db.GET(key)
+	if got != val {
+		t.Errorf("SETEX(%q) == %d, want %d", key, got, val)
+	}
+}
+
+func TestPSETEXAfterExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := 25
+	exp := 1000
+	db := setUp()
+	db.PSETEX(key, int64(exp), val)
+	time.Sleep(time.Duration(exp+1) * time.Millisecond)
+	got := db.GET(key)
+	if got != nil {
+		t.Errorf("SETEX(%q) == %d, want nil", key, got)
+	}
+}
+
+
+
