@@ -123,26 +123,28 @@ func TestINCRNonExists(t *testing.T) {
 	}
 }
 
-// // Test decrementing values for given key by 1
-// func TestDECR(t *testing.T) {
-// 	db := setUp()
-// 	for _, c := range integers {
-// 		db.SET(c.key, c.value)
-// 		got := db.DECR(c.key)
-// 		if got != c.value.(int)-1 {
-// 			t.Errorf("DECR(%q) == %d, want %d", c.key, got, c.value.(int)-1)
-// 		}
-// 	}
-// }
+// Test decrementing values for given key by 1
+func TestDECR(t *testing.T) {
+	db := setUp()
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got, _ := db.DECR(c.key)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want - 1)
+		if got != wantStr {
+			t.Errorf("DECR(%q) == %s, want %s", c.key, got, wantStr)
+		}
+	}
+}
 
-// // Test incrementing non-existent keys
-// func TestDECRNonExists(t *testing.T) {
-// 	db := setUp()
-// 	got := db.DECR("non-decr-key")
-// 	if got != -1 {
-// 		t.Errorf("DECR(%q) == %d, want %d", "non-decr-key", got, -1)
-// 	}
-// }
+// Test decrementing non-existent keys
+func TestDECRNonExists(t *testing.T) {
+	db := setUp()
+	got, _ := db.DECR("non-decr-key")
+	if got != "-1" {
+		t.Errorf("DECR(%q) == %s, want %s", "non-decr-key", got, "-1")
+	}
+}
 
 // Test incrementing values for given key by n
 func TestINCRBY(t *testing.T) {
@@ -171,18 +173,32 @@ func TestINCRBYString(t *testing.T) {
 	}
 }
 
-// // Test decrementing values for given key by n
-// func TestDECRBY(t *testing.T) {
-// 	db := setUp()
-// 	n := 3
-// 	for _, c := range integers {
-// 		db.SET(c.key, c.value)
-// 		got := db.DECRBY(c.key, n)
-// 		if got != c.value.(int)-n {
-// 			t.Errorf("DECRBY(%q) == %d, want %d", c.key, got, c.value.(int)-n)
-// 		}
-// 	}
-// }
+// Test decrementing values for given key by n
+func TestDECRBY(t *testing.T) {
+	db := setUp()
+	n := 3
+	for _, c := range integers {
+		db.SET(c.key, c.value)
+		got, _ := db.DECRBY(c.key, n)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want - n)
+		if got != wantStr {
+			t.Errorf("DECRBY(%q) == %s, want %s", c.key, got, wantStr)
+		}
+	}
+}
+
+// Test decrementing values for a string value
+func TestDECRBYString(t *testing.T) {
+	db := setUp()
+	n := 3
+	key := "foo"
+	db.SET(key, "string value")
+	_, err := db.DECRBY(key, n)
+	if !err {
+		t.Errorf("DECRBY(%q, %d) == %t, want %t", key, n, err, true)
+	}
+}
 
 /* Test incrementing values for given key by 1
 func TestINCRmismatchs(t *testing.T) {

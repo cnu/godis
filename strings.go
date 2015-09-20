@@ -37,10 +37,10 @@ func (g *Godis) INCR(key string) (string, bool) {
 	return g.INCRBY(key, 1)
 }
 
-// // DECR decrements the key by one
-// func (g Godis) DECR(key string) interface{} {
-// 	return g.DECRBY(key, 1)
-// }
+// DECR decrements the key by one
+func (g *Godis) DECR(key string) (string, bool) {
+	return g.DECRBY(key, 1)
+}
 
 // INCRBY increments the key by given value
 func (g *Godis) INCRBY(key string, n int) (string, bool) {
@@ -59,15 +59,10 @@ func (g *Godis) INCRBY(key string, n int) (string, bool) {
 	return "", true
 }
 
-// // DECRBY decrements the key by given value
-// func (g Godis) DECRBY(key string, n int) interface{} {
-// 	if g.EXISTS(key) == 0 {
-// 		g.SET(key, 0)
-// 	}
-// 	val := g.GET(key).(int)
-// 	g.SET(key, val-n)
-// 	return g.GET(key)
-// }
+// DECRBY decrements the key by given value
+func (g *Godis) DECRBY(key string, n int) (string, bool) {
+	return g.INCRBY(key, -n)
+}
 
 // MGET returns a slice of values for a input slice of keys
 func (g *Godis) MGET(keys ...string) []interface{} {
