@@ -213,3 +213,27 @@ func TestSETEXAfterExp(t *testing.T) {
 		t.Errorf("SETEX(%q) == %d, want nil", key, got)
 	}
 }
+
+func TestSETEXWithZero(t *testing.T) {
+	// Zero as expiry time
+	key := "mykey"
+	val := 25
+	exp := 0
+	db := setUp()
+	res := db.SETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
+
+func TestSETEXNegative(t *testing.T) {
+	// negative valuse as expiry time
+	key := "mykey"
+	val := 25
+	exp := -1
+	db := setUp()
+	res := db.SETEX(key, int64(exp), val)
+	if res != false {
+		t.Errorf("SETEX(%q) == %d, want %d", key, res, val)
+	}
+}
