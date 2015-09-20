@@ -1,7 +1,7 @@
 package godis
 
 // SET is used to assign a value to a key
-func (g Godis) SET(key string, value string) string {
+func (g *Godis) SET(key string, value string) string {
 	if g.EXISTS(key) == 1 {
 		s, exists := g.getSDS(key)
 		if exists {
@@ -16,13 +16,13 @@ func (g Godis) SET(key string, value string) string {
 	return key
 }
 
-func (g Godis) getSDS(key string) (*SDS, bool) {
+func (g *Godis) getSDS(key string) (*SDS, bool) {
 	s, exists := g.db[key]
 	return s, exists
 }
 
 // GET returns the value stored for a key
-func (g Godis) GET(key string) (string, bool) {
+func (g *Godis) GET(key string) (string, bool) {
 	s, exists := g.getSDS(key)
 	if exists {
 		return s.get(), false
@@ -61,7 +61,7 @@ func (g Godis) GET(key string) (string, bool) {
 // }
 
 // MGET returns a slice of values for a input slice of keys
-func (g Godis) MGET(keys ...string) []interface{} {
+func (g *Godis) MGET(keys ...string) []interface{} {
 	var output []interface{} // will be strings or nils
 	for _, key := range keys {
 		value, err := g.GET(key)
@@ -79,7 +79,7 @@ func (g Godis) MGET(keys ...string) []interface{} {
 // MSET sets a slice of key-values
 // pass a slice of keys and value alternating
 // eg: "key1", "value1", "key2", "value2"
-func (g Godis) MSET(items ...string) bool {
+func (g *Godis) MSET(items ...string) bool {
 	g.Lock()
 	defer g.Unlock()
 	for i, item := range items {
