@@ -1,6 +1,7 @@
 package godis
 
 import (
+	"errors"
 	"strconv"
 	"time"
 )
@@ -36,37 +37,37 @@ func (g *Godis) GET(key string) (string, bool) {
 }
 
 // Destroy a key after given time in seconds
-func (g *Godis) destroyInSecs(key string, exp int64) int {
+func (g *Godis) destroyInSecs(key string, exp uint64) int {
 	time.Sleep(time.Duration(exp) * time.Second)
 	return g.DEL(key)
 }
 
 // Destroy a key after given time in milliseconds
-func (g *Godis) destroyInMillis(key string, exp int64) int {
+func (g *Godis) destroyInMillis(key string, exp uint64) int {
 	time.Sleep(time.Duration(exp) * time.Millisecond)
 	return g.DEL(key)
 }
 
 // SETEX is used to assign a value to a key and destroy it within its given
 //expiry time in seconds
-func (g *Godis) SETEX(key string, exp int64, value string) interface{} {
+func (g *Godis) SETEX(key string, exp uint64, value string) (string, error) {
 	if exp <= 0 {
-		return false
+		return "", errors.New("invalid expire time in SETEX")
 	}
 	g.SET(key, value)
 	go g.destroyInSecs(key, exp)
-	return key
+	return key, nil
 }
 
 // PSETEX is used to assign a value to a key and destroy it within its given
 // expiry time in milliseconds
-func (g *Godis) PSETEX(key string, exp int64, value string) interface{} {
+func (g *Godis) PSETEX(key string, exp uint64, value string) (string, error) {
 	if exp <= 0 {
-		return false
+		return "", errors.New("invalid expire time in PSETEX")
 	}
 	g.SET(key, value)
 	go g.destroyInMillis(key, exp)
-	return key
+	return key, nil
 }
 
 // INCR increments the key by one
