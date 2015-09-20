@@ -82,6 +82,18 @@ func TestDEL(t *testing.T) {
 	}
 }
 
+// Test RENAME with different key and newKey
+func TestRENAME(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	res := db.RENAME(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAME(%s, %s) == %s, want %t", key, newKey, res, false)
+	}
+}
+
 // Test RENAME when key and newKey are same
 func TestRENAMESameKeys(t *testing.T) {
 	db := setUp()
@@ -117,4 +129,30 @@ func TestRENAMENewKeyExist(t *testing.T) {
 		t.Errorf("RENAME(%s, %s) == %s, want %t", key, newKey, res, false)
 	}
 }
+
+// Test RENAMENX with different key and newKey
+func TestRENAMENX(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	res := db.RENAMENX(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAMENX(%s, %s) == %s, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAMENX when key and newKey are same
+func TestRENAMENXSameKeys(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "myKey"
+	db.SET(key, "value")
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %s, want %t", key, newKey, res, false)
+	}
+}
+
+
 
