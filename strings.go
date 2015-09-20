@@ -80,6 +80,8 @@ func (g Godis) MGET(keys ...string) []interface{} {
 // pass a slice of keys and value alternating
 // eg: "key1", "value1", "key2", "value2"
 func (g Godis) MSET(items ...string) bool {
+	g.Lock()
+	defer g.Unlock()
 	for i, item := range items {
 		if i%2 == 1 {
 			continue
