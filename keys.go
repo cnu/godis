@@ -24,7 +24,7 @@ func (g Godis) DEL(keys ...string) int {
 // and newkey are the same, or when key does not exist. If new key
 // already exists it is overwritten.
 func (g Godis) RENAME(key, newKey string) interface{} {
-	if key != newKey || g.EXISTS(key) != 0 {
+	if key != newKey && g.EXISTS(key) != 0 {
 		if g.EXISTS(newKey) > 0 {
 			g.DEL(newKey)
 		}
