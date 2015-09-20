@@ -104,3 +104,17 @@ func TestRENAMENonExistant(t *testing.T) {
 		t.Errorf("RENAME(%s, %s) == %s, want %t", key, newKey, res, false)
 	}
 }
+
+// Test RENAME when newKey exists
+func TestRENAMENewKeyExist(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	db.SET(newKey, "somevalue")
+	res := db.RENAME(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAME(%s, %s) == %s, want %t", key, newKey, res, false)
+	}
+}
+
