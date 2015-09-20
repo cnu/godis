@@ -21,7 +21,7 @@ func BenchmarkGET(b *testing.B) {
 
 	// run the GET method b.N times
 	for n := 0; n < b.N; n++ {
-		_ = db.GET("key")
+		_, _ = db.GET("key")
 	}
 }
 

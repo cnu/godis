@@ -1,6 +1,10 @@
 package godis
 
-import "testing"
+import (
+	"strconv"
+	"testing"
+	"time"
+)
 
 // Test setting key-values to the DB
 func TestSET(t *testing.T) {
@@ -19,8 +23,8 @@ func TestGET(t *testing.T) {
 	db := setUp()
 	for _, c := range cases {
 		db.SET(c.key, c.value)
-		got := db.GET(c.key)
-		if got != c.value {
+		got, err := db.GET(c.key)
+		if !err && got != c.value {
 			t.Errorf("GET(%q) == %q, want %q", c.key, got, c.value)
 		}
 	}
@@ -30,9 +34,10 @@ func TestGET(t *testing.T) {
 func TestGETNotEXISTS(t *testing.T) {
 	db := setUp()
 	key := "not exists"
-	got := db.GET(key)
-	if got != nil {
-		t.Errorf("GET(%q) == %v, want %v", key, got, nil)
+	_, err := db.GET(key)
+	if !err {
+		// Means the key exists
+		t.Errorf("GET(%q) == %t, want %t", key, false, true)
 	}
 }
 
@@ -65,7 +70,6 @@ func TestMGETNotExists(t *testing.T) {
 			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
 		}
 	}
-
 }
 
 // Test MGETting few non-existent key-values from the DB
@@ -85,7 +89,6 @@ func TestMGETFewNotExists(t *testing.T) {
 			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
 		}
 	}
-
 }
 
 // Test MSETing key-values pairs into the DB
@@ -103,9 +106,11 @@ func TestINCR(t *testing.T) {
 	db := setUp()
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got := db.INCR(c.key)
-		if got != c.value.(int)+1 {
-			t.Errorf("INCR(%q) == %d, want %d", c.key, got, c.value.(int)+1)
+		got, _ := db.INCR(c.key)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want + 1)
+		if got != wantStr {
+			t.Errorf("INCR(%q) == %s, want %s", c.key, got, wantStr)
 		}
 	}
 }
@@ -113,9 +118,9 @@ func TestINCR(t *testing.T) {
 // Test incrementing non-existent keys
 func TestINCRNonExists(t *testing.T) {
 	db := setUp()
-	got := db.INCR("non-incr-key")
-	if got != 1 {
-		t.Errorf("INCR(%q) == %d, want %d", "non-incr-key", got, 1)
+	got, _ := db.INCR("non-incr-key")
+	if got != "1" {
+		t.Errorf("INCR(%q) == %s, want %s", "non-incr-key", got, "1")
 	}
 }
 
@@ -124,19 +129,21 @@ func TestDECR(t *testing.T) {
 	db := setUp()
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got := db.DECR(c.key)
-		if got != c.value.(int)-1 {
-			t.Errorf("DECR(%q) == %d, want %d", c.key, got, c.value.(int)-1)
+		got, _ := db.DECR(c.key)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want - 1)
+		if got != wantStr {
+			t.Errorf("DECR(%q) == %s, want %s", c.key, got, wantStr)
 		}
 	}
 }
 
-// Test incrementing non-existent keys
+// Test decrementing non-existent keys
 func TestDECRNonExists(t *testing.T) {
 	db := setUp()
-	got := db.DECR("non-decr-key")
-	if got != -1 {
-		t.Errorf("DECR(%q) == %d, want %d", "non-decr-key", got, -1)
+	got, _ := db.DECR("non-decr-key")
+	if got != "-1" {
+		t.Errorf("DECR(%q) == %s, want %s", "non-decr-key", got, "-1")
 	}
 }
 
@@ -146,10 +153,24 @@ func TestINCRBY(t *testing.T) {
 	n := 3
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got := db.INCRBY(c.key, n)
-		if got != c.value.(int)+n {
-			t.Errorf("INCRBY(%q) == %d, want %d", c.key, got, c.value.(int)+n)
+		got, _ := db.INCRBY(c.key, n)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want + n)
+		if got != wantStr {
+			t.Errorf("INCRBY(%q) == %s, want %s", c.key, got, wantStr)
 		}
+	}
+}
+
+// Test incrementing values for a string value
+func TestINCRBYString(t *testing.T) {
+	db := setUp()
+	n := 3
+	key := "foo"
+	db.SET(key, "string value")
+	_, err := db.INCRBY(key, n)
+	if !err {
+		t.Errorf("INCRBY(%q, %d) == %t, want %t", key, n, err, true)
 	}
 }
 
@@ -159,10 +180,24 @@ func TestDECRBY(t *testing.T) {
 	n := 3
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got := db.DECRBY(c.key, n)
-		if got != c.value.(int)-n {
-			t.Errorf("DECRBY(%q) == %d, want %d", c.key, got, c.value.(int)-n)
+		got, _ := db.DECRBY(c.key, n)
+		want, _ := strconv.Atoi(c.value)
+		wantStr := strconv.Itoa(want - n)
+		if got != wantStr {
+			t.Errorf("DECRBY(%q) == %s, want %s", c.key, got, wantStr)
 		}
+	}
+}
+
+// Test decrementing values for a string value
+func TestDECRBYString(t *testing.T) {
+	db := setUp()
+	n := 3
+	key := "foo"
+	db.SET(key, "string value")
+	_, err := db.DECRBY(key, n)
+	if !err {
+		t.Errorf("DECRBY(%q, %d) == %t, want %t", key, n, err, true)
 	}
 }
 
@@ -182,3 +217,83 @@ func TestINCRmismatchs(t *testing.T) {
         }
     }
 }*/
+
+func TestSETEXWithinExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := "some value"
+	exp := 2
+	db := setUp()
+	db.SETEX(key, uint64(exp), val)
+	time.Sleep(time.Duration(exp-1) * time.Second)
+	got := db.EXISTS(key)
+	if got != 1 {
+		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 1)
+	}
+}
+
+func TestSETEXAfterExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := "some value"
+	exp := 1
+	db := setUp()
+	db.SETEX(key, uint64(exp), val)
+	time.Sleep(time.Duration(exp+1) * time.Second)
+	got := db.EXISTS(key)
+	if got != 0 {
+		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 0)
+	}
+}
+
+func TestSETEXWithZero(t *testing.T) {
+	// Zero as expiry time
+	key := "mykey"
+	val := "some value"
+	exp := 0
+	db := setUp()
+	_, err := db.SETEX(key, uint64(exp), val)
+	if err == nil {
+		t.Errorf("SETEX(%q, %d) == nil, want Error(\"invalid expire time in SETEX\")", key, exp)
+	}
+}
+
+func TestPSETEXWithinExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := "some value"
+	exp := 1000
+	db := setUp()
+	db.PSETEX(key, uint64(exp), val)
+	time.Sleep(time.Duration(exp-10) * time.Millisecond)
+	got := db.EXISTS(key)
+	if got != 1 {
+		t.Errorf("PSETEX(%q, %d) == %d, want %d", key, exp, got, 1)
+	}
+}
+
+func TestPSETEXAfterExp(t *testing.T) {
+	// One second before expiry time
+	key := "mykey"
+	val := "some value"
+	exp := 1000
+	db := setUp()
+	db.PSETEX(key, uint64(exp), val)
+	time.Sleep(time.Duration(exp+10) * time.Millisecond)
+	got := db.EXISTS(key)
+	if got != 0 {
+		t.Errorf("PSETEX(%q) == %d, want %d", key, got, 0)
+	}
+}
+
+func TestPSETEXWithZero(t *testing.T) {
+	// Zero as expiry time
+	key := "mykey"
+	val := "some value"
+	exp := 0
+	db := setUp()
+	_, err := db.PSETEX(key, uint64(exp), val)
+	if err == nil {
+		t.Errorf("PSETEX(%q, %d) == nil, want Error(\"invalid expire time in PSETEX\")", key, exp)
+	}
+}

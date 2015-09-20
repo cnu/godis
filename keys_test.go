@@ -21,13 +21,13 @@ func TestEXISTS(t *testing.T) {
 	}
 
 	// all existent keys
-	keys := []string{"key1", "test_num", "key 3"}
+	keys := []string{"key1", "key2", "key 3"}
 	if got := db.EXISTS(keys...); got != len(keys) {
 		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, len(keys))
 	}
 
 	// two existent keys and one non-existent keys
-	keys = []string{"key1", "test_num", "foo"}
+	keys = []string{"key1", "key2", "foo"}
 	if got := db.EXISTS(keys...); got != 2 {
 		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, 2)
 	}
@@ -61,17 +61,17 @@ func TestDEL(t *testing.T) {
 	}
 
 	// DEL a list of keys which all exist
-	removeKeys := []string{"key1", "test_num", "key 3"}
+	removeKeys := []string{"key1", "key 3"}
 	got = db.DEL(removeKeys...)
 	if got != len(removeKeys) {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, len(removeKeys))
 	}
 
 	// DEL a list of keys which has one non-existent key
-	removeKeys = []string{"key2", "tested", "not-exists"}
+	removeKeys = []string{"key2", "not-exists"}
 	got = db.DEL(removeKeys...)
-	if got != 2 {
-		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 2)
+	if got != 1 {
+		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 1)
 	}
 
 	// DEL a list of keys which has all non-existent keys
@@ -79,5 +79,101 @@ func TestDEL(t *testing.T) {
 	got = db.DEL(removeKeys...)
 	if got != 0 {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 0)
+	}
+}
+
+// Test RENAME with different key and newKey
+func TestRENAME(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	res := db.RENAME(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	}
+}
+
+// Test RENAME when key and newKey are same
+func TestRENAMESameKeys(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "myKey"
+	db.SET(key, "value")
+	res := db.RENAME(key, newKey)
+	if res != false {
+		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAME when given key doesn't exist
+func TestRENAMENonExistant(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	res := db.RENAME(key, newKey)
+	if res != false {
+		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAME when newKey exists
+func TestRENAMENewKeyExist(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	db.SET(newKey, "somevalue")
+	res := db.RENAME(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	}
+}
+
+// Test RENAMENX with different key and newKey
+func TestRENAMENX(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	res := db.RENAMENX(key, newKey)
+	if res != newKey {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	}
+}
+
+// Test RENAMENX when key and newKey are same
+func TestRENAMENXSameKeys(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "myKey"
+	db.SET(key, "value")
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAMENX when given key doesn't exist
+func TestRENAMENXNonExistant(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	}
+}
+
+// Test RENAMENX when newKey exists
+func TestRENAMENXNewKeyExist(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	db.SET(newKey, "somevalue")
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
 	}
 }

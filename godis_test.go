@@ -1,12 +1,12 @@
 package godis
 
 func setUp() *Godis {
-	return New()
+	return NewGodis()
 }
 
 type Case struct {
 	key   string
-	value interface{}
+	value string
 }
 
 var cases = []Case{
@@ -15,24 +15,24 @@ var cases = []Case{
 	{"key 3", "value 3"},    // keys with spaces
 	{"மொழி", "தமிழ்"},       // unicode
 	{"key1", "new value 1"}, // overwrite a key
-	{"tested", true},        // boolean value
+	/*{"tested", true},        // boolean value
 	{"test_num", 7},         // int value
 	{"PI", 3.14},            // float value
+	*/
 }
 
 var integers = []Case{
-	{"int", 234},
-	{"long", 223344231},
-	//{"bool", true}, // boolean value
-	{"negative", -554},
-	{"zero", 0},
+	{"int", "234"},
+	{"long", "223344231"},
+	{"negative", "-554"},
+	{"zero", "0"},
 }
 
-var floats = []Case{
-	{"float64", 22423234.1223},
-	{"float", 443.21},
-}
+// var floats = []Case{
+// 	{"float64", 22423234.1223},
+// 	{"float", 443.21},
+// }
 
-var strings = []Case{
-	{"மொழி", "தமிழ்"}, // value with string
-}
+// var strings = []Case{
+// 	{"மொழி", "தமிழ்"}, // value with string
+// }
