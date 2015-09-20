@@ -38,7 +38,7 @@ func (g Godis) RENAME(key, newKey string) interface{} {
 // RENAMENX is used to rename key to newkey if newkey does not yet exist.
 // Returns an error under the same conditions as RENAME.
 func (g Godis) RENAMENX(key, newKey string) interface{} {
-	if (key != newKey || g.EXISTS(key) != 0) && g.EXISTS(newKey) == 0 {
+	if key != newKey && g.EXISTS(key) != 0 && g.EXISTS(newKey) == 0 {
 		val := g.GET(key)
 		g.DEL(key)
 		return g.SET(newKey, val)
