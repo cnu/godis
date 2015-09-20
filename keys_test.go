@@ -154,5 +154,27 @@ func TestRENAMENXSameKeys(t *testing.T) {
 	}
 }
 
+// Test RENAMENX when given key doesn't exist
+func TestRENAMENXNonExistant(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %s, want %t", key, newKey, res, false)
+	}
+}
 
+// Test RENAMENX when newKey exists
+func TestRENAMENXNewKeyExist(t *testing.T) {
+	db := setUp()
+	key := "myKey"
+	newKey := "hisKey"
+	db.SET(key, "value")
+	db.SET(newKey, "somevalue")
+	res := db.RENAMENX(key, newKey)
+	if res != false {
+		t.Errorf("RENAMENX(%s, %s) == %s, want %t", key, newKey, res, false)
+	}
+}
 
