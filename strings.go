@@ -28,6 +28,9 @@ func (g Godis) destroyInMillis(key string, exp int64) int {
 // SETEX is used to assign a value to a key and destroy it within its given
 //expiry time in seconds
 func (g Godis) SETEX(key string, exp int64, value interface{}) string {
+	if exp <= 0 {
+		return false
+	}
 	g.SET(key, value)
 	go g.destroyInSecs(key, exp)
 	return key
@@ -36,6 +39,9 @@ func (g Godis) SETEX(key string, exp int64, value interface{}) string {
 // PSETEX is used to assign a value to a key and destroy it within its given
 // expiry time in milliseconds
 func (g Godis) PSETEX(key string, exp int64, value interface{}) string {
+	if exp <= 0 {
+		return false
+	}
 	g.SET(key, value)
 	go g.destroyInMillis(key, exp)
 	return key
