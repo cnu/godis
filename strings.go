@@ -137,13 +137,13 @@ func (g *Godis) MSET(items ...string) bool {
 
 //STRLEN returns the length of the string value stored at key.
 //An error is returned when key holds a non-string value.
-func (g *Godis) STRLEN(key string) (interface{}, bool) {
+func (g *Godis) STRLEN(key string) (int64, error) {
 	val, err := g.GET(key)
-
-	if !err && reflect.ValueOf(val).Kind() == reflect.String {
-
-		return int64(utf8.RuneCountInString(val)), false
+	if err {
+		return 0, errors.New("keynotfound")
 	}
-	return "", true
-
+	if reflect.ValueOf(val).Kind() != reflect.String {
+		return 0, errors.New("typemismatch")
+	}
+	return int64(utf8.RuneCountInString(val)), nil
 }
