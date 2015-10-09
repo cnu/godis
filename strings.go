@@ -2,8 +2,10 @@ package godis
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 	"time"
+	"unicode/utf8"
 )
 
 func (g *Godis) getSDS(key string) (*SDS, bool) {
@@ -131,4 +133,17 @@ func (g *Godis) MSET(items ...string) bool {
 		g.SET(item, items[i+1])
 	}
 	return true
+}
+
+//STRLEN returns the length of the string value stored at key.
+//An error is returned when key holds a non-string value.
+func (g *Godis) STRLEN(key string) (int64, error) {
+	val, err := g.GET(key)
+	if err {
+		return 0, errors.New("keynotfound")
+	}
+	if reflect.ValueOf(val).Kind() != reflect.String {
+		return 0, errors.New("typemismatch")
+	}
+	return int64(utf8.RuneCountInString(val)), nil
 }

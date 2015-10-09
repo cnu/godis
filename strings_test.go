@@ -297,3 +297,75 @@ func TestPSETEXWithZero(t *testing.T) {
 		t.Errorf("PSETEX(%q, %d) == nil, want Error(\"invalid expire time in PSETEX\")", key, exp)
 	}
 }
+
+// STRLEN should return length of a int
+func TestSTRLENWithInt(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "12345"
+	db.SET(key, val)
+	got, err := db.STRLEN(key)
+	if err != nil || got != 5 {
+		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 5)
+	}
+}
+
+// STRLEN should return length of a float
+func TestSTRLENWithFloat(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "12345.54321"
+	db.SET(key, val)
+	got, err := db.STRLEN(key)
+	if err != nil || got != 11 {
+		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 11)
+	}
+}
+
+// STRLEN should return length of a long
+func TestSTRLENWithLong(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "12345.5432123453453463423434344652123234235"
+	db.SET(key, val)
+	got, err := db.STRLEN(key)
+	if err != nil || got != 43 {
+		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 43)
+	}
+}
+
+// STRLEN should return length of a string
+func TestSTRLENWithStr(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "A quick brown fox jumped over a lazy dog and broke its leg"
+	db.SET(key, val)
+	got, err := db.STRLEN(key)
+	if err != nil || got != 58 {
+		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 58)
+	}
+}
+
+// STRLEN should return Zero if given key is empty.
+func TestSTRLENWithoutVal(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := ""
+	db.SET(key, val)
+	got, err := db.STRLEN(key)
+	if err != nil || got != 0 {
+		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 0)
+	}
+}
+
+// STRLEN should return 0, keynotfound error if given key does not exist.
+func TestSTRLENWithoutKey(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	got, err := db.STRLEN(key)
+	if err == nil {
+		t.Errorf("STRLEN(%q) == %v,%v want 0,keynotfound", key, got, err)
+	}
+}
+
+// TODO : Write test cases for STRLEN in type mismatch after data structs are done.
