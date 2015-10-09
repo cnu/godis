@@ -347,7 +347,7 @@ func TestSTRLENWithStr(t *testing.T) {
 }
 
 // STRLEN should return Zero if given key is empty.
-func TestSTRLENWithEmpty(t *testing.T) {
+func TestSTRLENWithoutVal(t *testing.T) {
 	db := setUp()
 	key := "mykey"
 	val := ""
@@ -355,6 +355,16 @@ func TestSTRLENWithEmpty(t *testing.T) {
 	got, err := db.STRLEN(key)
 	if err != nil || got != 0 {
 		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 0)
+	}
+}
+
+// STRLEN should return 0, keynotfound error if given key does not exist.
+func TestSTRLENWithoutKey(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	got, err := db.STRLEN(key)
+	if err == nil {
+		t.Errorf("STRLEN(%q) == %v,%v want 0,keynotfound", key, got, err)
 	}
 }
 
