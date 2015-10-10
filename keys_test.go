@@ -181,21 +181,21 @@ func TestRENAMENXNewKeyExist(t *testing.T) {
 }
 
 // Test RANDOMKEY for existing db
-func TestRANDOMKEY (t *testing.T) {
+func TestRANDOMKEY(t *testing.T) {
 	db := setUp()
 	db.MSET("key1", "val1", "key2", "val2", "key3", "val3", "key4", "val4",
-	 "key5", "val5", "key6", "val6", "key7","val7", "key8","val8")
+		"key5", "val5", "key6", "val6", "key7", "val7", "key8", "val8")
 	got, err := db.RANDOMKEY()
-	if err != nil{
+	if err != nil {
 		t.Errorf("RANDOMKEY() == %v,%v want %v,<nil>", got, err, got)
 	}
 }
 
 // Test RANDOMKEY for non-existant db
-func TestRANDOMKEYNonExistant (t *testing.T) {
+func TestRANDOMKEYNonExistant(t *testing.T) {
 	db := setUp()
 	got, err := db.RANDOMKEY()
-	if err.Error() != "emptydb"{
+	if err.Error() != "emptydb" {
 		t.Errorf("RANDOMKEY() == %v,%v want %v,emptydb", got, err, got)
 	}
 }
