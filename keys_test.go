@@ -190,3 +190,12 @@ func TestRANDOMKEY (t *testing.T) {
 		t.Errorf("RANDOMKEY() == %v,%v want %v,<nil>", got, err, got)
 	}
 }
+
+// Test RANDOMKEY for non-existant db
+func TestRANDOMKEYNonExistant (t *testing.T) {
+	db := setUp()
+	got, err := db.RANDOMKEY()
+	if err.Error() != "emptydb"{
+		t.Errorf("RANDOMKEY() == %v,%v want %v,emptydb", got, err, got)
+	}
+}
