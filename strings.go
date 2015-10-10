@@ -4,7 +4,6 @@ import (
 	"errors"
 	"reflect"
 	"strconv"
-	"time"
 	"unicode/utf8"
 )
 
@@ -36,18 +35,6 @@ func (g *Godis) GET(key string) (string, bool) {
 		return s.get(), false
 	}
 	return "", true
-}
-
-// Destroy a key after given time in seconds
-func (g *Godis) destroyInSecs(key string, exp uint64) int {
-	time.Sleep(time.Duration(exp) * time.Second)
-	return g.DEL(key)
-}
-
-// Destroy a key after given time in milliseconds
-func (g *Godis) destroyInMillis(key string, exp uint64) int {
-	time.Sleep(time.Duration(exp) * time.Millisecond)
-	return g.DEL(key)
 }
 
 // SETEX is used to assign a value to a key and destroy it within its given

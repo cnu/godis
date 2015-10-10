@@ -1,5 +1,9 @@
 package godis
 
+import (
+	"errors"
+)
+
 // EXISTS returns in a key exists or not in the DB
 func (g *Godis) EXISTS(keys ...string) int {
 	count := 0
@@ -44,4 +48,20 @@ func (g *Godis) RENAMENX(key, newKey string) interface{} {
 		return g.SET(newKey, val)
 	}
 	return false
+}
+
+// RANDOMKEY returns a random key from the currently selected database.
+func (g *Godis) RANDOMKEY() (*SDS, error) {
+	keys := make([]string, len(g.db))
+	i := 0
+	// TODO : Move below logic to KEYS command when its implemented.
+	for k := range g.db {
+		keys[i] = k
+		i++
+	}
+	if len(keys) == 0 {
+		return nil, errors.New("emptydb")
+	}
+	rnum := g.generateRandnum(len(keys))
+	return g.db[keys[rnum]], nil
 }
