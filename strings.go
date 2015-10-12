@@ -7,11 +7,6 @@ import (
 	"unicode/utf8"
 )
 
-func (g *Godis) getSDS(key string) (*SDS, bool) {
-	s, exists := g.db[key]
-	return s, exists
-}
-
 // SET is used to assign a value to a key
 func (g *Godis) SET(key string, value string) string {
 	if g.EXISTS(key) == 1 {

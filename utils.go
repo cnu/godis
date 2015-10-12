@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+func (g *Godis) getSDS(key string) (*SDS, bool) {
+	s, exists := g.db[key]
+	return s, exists
+}
+
 // generateRandnum returns a random number within given range.
 func (g *Godis) generateRandnum(n int) int {
 	rand.Seed(time.Now().UnixNano())
