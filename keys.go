@@ -41,13 +41,13 @@ func (g *Godis) RENAME(key, newKey string) interface{} {
 
 // RENAMENX is used to rename key to newkey if newkey does not yet exist.
 // Returns an error under the same conditions as RENAME.
-func (g *Godis) RENAMENX(key, newKey string) interface{} {
+func (g *Godis) RENAMENX(key, newKey string) interface{}, error {
 	if key != newKey && g.EXISTS(key) != 0 && g.EXISTS(newKey) == 0 {
 		val, _ := g.GET(key)
 		g.DEL(key)
-		return g.SET(newKey, val)
+		return g.SET(newKey, val), nil
 	}
-	return false
+	return "",errors.New("keynotfound")
 }
 
 // RANDOMKEY returns a random key from the currently selected database.
