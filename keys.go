@@ -59,7 +59,6 @@ func (g *Godis) RENAMENX(key, newKey string) (string, error) {
 	g.DEL(key)
 	got, _ := g.SET(newKey, val)
 	return got, nil
-}
 
 // RANDOMKEY returns a random key from the currently selected database.
 func (g *Godis) RANDOMKEY() (*SDS, error) {
