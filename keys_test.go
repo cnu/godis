@@ -92,7 +92,7 @@ func TestRENAME(t *testing.T) {
 	db.SET(key, "value")
 	got, err := db.RENAME(key, newKey)
 	if err != nil {
-		t.Errorf("RENAME(%s, %s) == %v,%v want %s, <nil>", key, newKey, got,
+		t.Errorf("RENAME(%s, %s) == %s, %v want %s, <nil>", key, newKey, got,
 			err, newKey)
 	}
 }
@@ -121,7 +121,7 @@ func TestRENAMENonExistant(t *testing.T) {
 	// TODO : Check whether the error is returned as simple string or enclosed by
 	// error(keynotexists)
 	if err != "keynotexists" {
-		t.Errorf("RENAME(%s, %s) == %s,%v want %s, keynotexists", key, newKey, res,
+		t.Errorf("RENAME(%s, %s) == %s, %v want %s, keynotexists", key, newKey, res,
 			err, res)
 	}
 }
@@ -133,9 +133,9 @@ func TestRENAMENewKeyExist(t *testing.T) {
 	newKey := "hisKey"
 	db.SET(key, "value")
 	db.SET(newKey, "somevalue")
-	res := db.RENAME(key, newKey)
-	if res != newKey {
-		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	got, err := db.RENAME(key, newKey)
+	if err != nil {
+		t.Errorf("RENAME(%s, %s) == %s, %v want %s, <nil>", key, newKey, got, err, newKey)
 	}
 }
 
