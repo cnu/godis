@@ -27,16 +27,19 @@ func (g *Godis) DEL(keys ...string) int {
 // RENAME renames a key to newkey. Returns an error when the key
 // and newkey are the same, or when key does not exist. If new key
 // already exists it is overwritten.
-func (g *Godis) RENAME(key, newKey string) interface{} {
-	if key != newKey && g.EXISTS(key) != 0 {
-		if g.EXISTS(newKey) > 0 {
-			g.DEL(newKey)
-		}
-		val, _ := g.GET(key)
-		g.DEL(key)
-		return g.SET(newKey, val)
+func (g *Godis) RENAME(key, newKey string) (string, error) {
+	if key == newKey {
+		return "", errors.New("samekeys")
 	}
-	return false
+	if g.EXISTS(key) == 0 {
+		return "", errors.New("keynotexists")
+	}
+	if g.EXISTS(newKey) > 0 {
+		g.DEL(newKey)
+	}
+	val, _ := g.GET(key)
+	g.DEL(key)
+	return g.SET(newKey, val), nil
 }
 
 // RENAMENX is used to rename key to newkey if newkey does not yet exist.
