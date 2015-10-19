@@ -8,7 +8,7 @@ import (
 )
 
 // SET is used to assign a value to a key
-func (g *Godis) SET(key string, value string) string {
+func (g *Godis) SET(key string, value string) (string, error) {
 	if g.EXISTS(key) == 1 {
 		s, exists := g.getSDS(key)
 		if exists {
@@ -20,7 +20,7 @@ func (g *Godis) SET(key string, value string) string {
 		s := NewSDS(value)
 		g.db[key] = s
 	}
-	return key
+	return key, nil
 }
 
 // GET returns the value stored for a key
