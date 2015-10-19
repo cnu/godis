@@ -84,15 +84,15 @@ func TestDEL(t *testing.T) {
 	}
 }
 
-// Test RENAME with different key and newKey
+// Test RENAME with different, key and newKey
 func TestRENAME(t *testing.T) {
 	db := setUp()
 	key := "myKey"
 	newKey := "hisKey"
 	db.SET(key, "value")
-	res := db.RENAME(key, newKey)
-	if res != newKey {
-		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	got, err := db.RENAME(key, newKey)
+	if err != nil {
+		t.Errorf("RENAME(%s, %s) == %v,%v want %s", key, newKey, got, err, newKey)
 	}
 }
 
