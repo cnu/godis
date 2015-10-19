@@ -117,9 +117,12 @@ func TestRENAMENonExistant(t *testing.T) {
 	db := setUp()
 	key := "myKey"
 	newKey := "hisKey"
-	res := db.RENAME(key, newKey)
-	if res != false {
-		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAME(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(keynotexists)
+	if err != "keynotexists" {
+		t.Errorf("RENAME(%s, %s) == %s,%v want %s, keynotexists", key, newKey, res,
+			err, res)
 	}
 }
 
