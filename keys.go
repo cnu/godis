@@ -53,7 +53,7 @@ func (g *Godis) RENAMENX(key, newKey string) (string, error) {
 		return "", errors.New("keynotexists")
 	}
 	if g.EXISTS(newKey) != 0 {
-		return "", errors.New("nosuchkey")
+		return "", errors.New("newkeyexists")
 	}
 	val, _ := g.GET(key)
 	g.DEL(key)
