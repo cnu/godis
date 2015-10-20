@@ -9,7 +9,7 @@ import (
 
 // SET is used to assign a value to a key
 func (g *Godis) SET(key string, value string) (string, error) {
-	if g.EXISTS(key) == 1 {
+	if got, _ := g.EXISTS(key); got == 1 {
 		s, exists := g.getSDS(key)
 		if exists {
 			s.Lock()
@@ -66,7 +66,7 @@ func (g *Godis) DECR(key string) (string, bool) {
 
 // INCRBY increments the key by given value
 func (g *Godis) INCRBY(key string, n int) (string, bool) {
-	if g.EXISTS(key) == 0 {
+	if got, _ := g.EXISTS(key); got == 0 {
 		g.SET(key, "0")
 	}
 	val, err := g.GET(key)
