@@ -226,7 +226,7 @@ func TestSETEXWithinExp(t *testing.T) {
 	db := setUp()
 	db.SETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp-1) * time.Second)
-	got := db.EXISTS(key)
+	got, _ := db.EXISTS(key)
 	if got != 1 {
 		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 1)
 	}
@@ -240,7 +240,7 @@ func TestSETEXAfterExp(t *testing.T) {
 	db := setUp()
 	db.SETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp+1) * time.Second)
-	got := db.EXISTS(key)
+	got, _ := db.EXISTS(key)
 	if got != 0 {
 		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 0)
 	}
@@ -266,7 +266,7 @@ func TestPSETEXWithinExp(t *testing.T) {
 	db := setUp()
 	db.PSETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp-10) * time.Millisecond)
-	got := db.EXISTS(key)
+	got, _ := db.EXISTS(key)
 	if got != 1 {
 		t.Errorf("PSETEX(%q, %d) == %d, want %d", key, exp, got, 1)
 	}
@@ -280,7 +280,7 @@ func TestPSETEXAfterExp(t *testing.T) {
 	db := setUp()
 	db.PSETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp+10) * time.Millisecond)
-	got := db.EXISTS(key)
+	got, _ := db.EXISTS(key)
 	if got != 0 {
 		t.Errorf("PSETEX(%q) == %d, want %d", key, got, 0)
 	}
