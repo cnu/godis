@@ -15,7 +15,8 @@ func (g *Godis) EXISTS(keys ...string) int {
 	return count
 }
 
-// DEL removes all keys if it exists and returns the number of keys removed
+// DEL removes all keys if it exists and returns the number of keys removed,
+// error returned by DEL key is always <nil>.
 func (g *Godis) DEL(keys ...string) (int, error) {
 	count := g.EXISTS(keys...)
 	for _, key := range keys {
