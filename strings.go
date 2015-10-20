@@ -36,7 +36,7 @@ func (g *Godis) GET(key string) (string, bool) {
 //expiry time in seconds
 func (g *Godis) SETEX(key string, exp uint64, value string) (string, error) {
 	if exp <= 0 {
-		return "", errors.New("invalid expire time in SETEX")
+		return "", errors.New("badexpiry")
 	}
 	g.SET(key, value)
 	go g.destroyInSecs(key, exp)
@@ -47,7 +47,7 @@ func (g *Godis) SETEX(key string, exp uint64, value string) (string, error) {
 // expiry time in milliseconds
 func (g *Godis) PSETEX(key string, exp uint64, value string) (string, error) {
 	if exp <= 0 {
-		return "", errors.New("invalid expire time in PSETEX")
+		return "", errors.New("badexpiry")
 	}
 	g.SET(key, value)
 	go g.destroyInMillis(key, exp)
