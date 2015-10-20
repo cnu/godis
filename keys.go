@@ -16,12 +16,12 @@ func (g *Godis) EXISTS(keys ...string) int {
 }
 
 // DEL removes all keys if it exists and returns the number of keys removed
-func (g *Godis) DEL(keys ...string) int {
+func (g *Godis) DEL(keys ...string) (int, error) {
 	count := g.EXISTS(keys...)
 	for _, key := range keys {
 		delete(g.db, key)
 	}
-	return count
+	return count, nil
 }
 
 // RENAME renames a key to newkey. Returns an error when the key
