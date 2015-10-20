@@ -189,7 +189,7 @@ func TestRENAMENXNewKeyExist(t *testing.T) {
 	db.SET(key, "value")
 	db.SET(newKey, "somevalue")
 	got, err := db.RENAMENX(key, newKey)
-	if err != nil {
+	if err.Error() != "newkeyexists" {
 		t.Errorf("RENAMENX(%s, %s) == %s, %v want %s, <nil>", key, newKey, got, err, newKey)
 	}
 }
