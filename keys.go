@@ -5,20 +5,20 @@ import (
 )
 
 // EXISTS returns in a key exists or not in the DB
-func (g *Godis) EXISTS(keys ...string) int {
+func (g *Godis) EXISTS(keys ...string) (int, error) {
 	count := 0
 	for _, key := range keys {
 		if _, ok := g.db[key]; ok {
 			count++
 		}
 	}
-	return count
+	return count, nil
 }
 
 // DEL removes all keys if it exists and returns the number of keys removed,
 // error returned by DEL key is always <nil>.
 func (g *Godis) DEL(keys ...string) (int, error) {
-	count := g.EXISTS(keys...)
+	count, _ := g.EXISTS(keys...)
 	for _, key := range keys {
 		delete(g.db, key)
 	}
@@ -32,10 +32,10 @@ func (g *Godis) RENAME(key, newKey string) (string, error) {
 	if key == newKey {
 		return "", errors.New("samekeys")
 	}
-	if g.EXISTS(key) == 0 {
+	if got, _ := g.EXISTS(key); got== 0 {
 		return "", errors.New("keynotexists")
 	}
-	if g.EXISTS(newKey) > 0 {
+	if got, _ := g.EXISTS(newKey); got > 0 {
 		g.DEL(newKey)
 	}
 	val, _ := g.GET(key)
@@ -50,7 +50,7 @@ func (g *Godis) RENAMENX(key, newKey string) (string, error) {
 	if key == newKey {
 		return "", errors.New("samekeys")
 	}
-	if g.EXISTS(key) == 0 {
+	if got, _ := g.EXISTS(key); got == 0 {
 		return "", errors.New("keynotexists")
 	}
 	if g.EXISTS(newKey) != 0 {
