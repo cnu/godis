@@ -158,9 +158,12 @@ func TestRENAMENXSameKeys(t *testing.T) {
 	key := "myKey"
 	newKey := "myKey"
 	db.SET(key, "value")
-	res := db.RENAMENX(key, newKey)
-	if res != false {
-		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAMENX(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(samekeys)
+	if err.Error() != "samekeys" {
+		t.Errorf("RENAMENX(%s, %s) == %v, %v want %s, samekeys", key, newKey, got,
+			err, got)
 	}
 }
 
