@@ -172,9 +172,12 @@ func TestRENAMENXNonExistant(t *testing.T) {
 	db := setUp()
 	key := "myKey"
 	newKey := "hisKey"
-	res := db.RENAMENX(key, newKey)
-	if res != false {
-		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAMENX(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(keynotexists)
+	if err.Error() != "keynotexists" {
+		t.Errorf("RENAMENX(%s, %s) == %s, %v want %s, keynotexists", key, newKey,
+			got, err, got)
 	}
 }
 
