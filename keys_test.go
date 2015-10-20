@@ -50,35 +50,35 @@ func TestDEL(t *testing.T) {
 
 	// DEL a key which exists
 	key := "மொழி"
-	got := db.DEL(key)
+	got, _ := db.DEL(key)
 	if got != 1 {
 		t.Errorf("DEL(%q) == %d, want %d", key, got, 1)
 	}
 
 	// DEL a key which doesn't exist
 	key = "foo"
-	got = db.DEL(key)
+	got, _ = db.DEL(key)
 	if got != 0 {
 		t.Errorf("DEL(%q) == %d, want %d", key, got, 0)
 	}
 
 	// DEL a list of keys which all exist
 	removeKeys := []string{"key1", "key 3"}
-	got = db.DEL(removeKeys...)
+	got, _ = db.DEL(removeKeys...)
 	if got != len(removeKeys) {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, len(removeKeys))
 	}
 
 	// DEL a list of keys which has one non-existent key
 	removeKeys = []string{"key2", "not-exists"}
-	got = db.DEL(removeKeys...)
+	got, _ = db.DEL(removeKeys...)
 	if got != 1 {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 1)
 	}
 
 	// DEL a list of keys which has all non-existent keys
 	removeKeys = []string{"foo", "bar", "baz"}
-	got = db.DEL(removeKeys...)
+	got, _ = db.DEL(removeKeys...)
 	if got != 0 {
 		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 0)
 	}
