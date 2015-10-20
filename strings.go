@@ -33,7 +33,7 @@ func (g *Godis) GET(key string) (string, bool) {
 }
 
 // SETEX is used to assign a value to a key and destroy it within its given
-//expiry time in seconds
+//expiry time in seconds, returns the key,<nil> if set or "",<nil>
 func (g *Godis) SETEX(key string, exp uint64, value string) (string, error) {
 	if exp <= 0 {
 		return "", errors.New("badexpiry")
@@ -44,7 +44,7 @@ func (g *Godis) SETEX(key string, exp uint64, value string) (string, error) {
 }
 
 // PSETEX is used to assign a value to a key and destroy it within its given
-// expiry time in milliseconds
+// expiry time in milliseconds, returns the key,<nil> if set or "",<nil>
 func (g *Godis) PSETEX(key string, exp uint64, value string) (string, error) {
 	if exp <= 0 {
 		return "", errors.New("badexpiry")
