@@ -224,11 +224,11 @@ func TestSETEXWithinExp(t *testing.T) {
 	val := "some value"
 	exp := 2
 	db := setUp()
-	db.SETEX(key, uint64(exp), val)
+	got, err := db.SETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp-1) * time.Second)
-	got, _ := db.EXISTS(key)
-	if got != 1 {
-		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 1)
+	res, _ := db.EXISTS(key)
+	if res != 1 {
+		t.Errorf("SETEX(%q, %d, %v) == %d, <nil> want %d, <nil>", key, exp, val, got, 1)
 	}
 }
 
