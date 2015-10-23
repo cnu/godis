@@ -132,7 +132,7 @@ func TestDECR(t *testing.T) {
 		db.SET(c.key, c.value)
 		got, _ := db.DECR(c.key)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want - 1)
+		want -= 1
 		if got != wantStr {
 			t.Errorf("DECR(%q) == %s, want %s", c.key, got, wantStr)
 		}
