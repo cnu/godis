@@ -88,7 +88,7 @@ func (g *Godis) DECRBY(key string, n int) (int, error) {
 }
 
 // MGET returns a slice of values for a input slice of keys
-func (g *Godis) MGET(keys ...string) []interface{} {
+func (g *Godis) MGET(keys ...string) ([]interface{}, error) {
 	var output []interface{} // will be strings or nils
 	for _, key := range keys {
 		value, err := g.GET(key)
@@ -100,13 +100,14 @@ func (g *Godis) MGET(keys ...string) []interface{} {
 			output = append(output, nil)
 		}
 	}
-	return output
+	return output, nil
 }
 
 // MSET sets a slice of key-values
 // pass a slice of keys and value alternating
 // eg: "key1", "value1", "key2", "value2"
-func (g *Godis) MSET(items ...string) bool {
+// returns true, <nil> as MSET never fails!
+func (g *Godis) MSET(items ...string) (bool, error) {
 	g.Lock()
 	defer g.Unlock()
 	for i, item := range items {
@@ -115,7 +116,7 @@ func (g *Godis) MSET(items ...string) bool {
 		}
 		g.SET(item, items[i+1])
 	}
-	return true
+	return true, nil
 }
 
 //STRLEN returns the length of the string value stored at key.
