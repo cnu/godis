@@ -55,34 +55,35 @@ func (g *Godis) PSETEX(key string, exp uint64, value string) (string, error) {
 }
 
 // INCR increments the key by one
-func (g *Godis) INCR(key string) (string, bool) {
+func (g *Godis) INCR(key string) (int, error) {
 	return g.INCRBY(key, 1)
 }
 
 // DECR decrements the key by one
-func (g *Godis) DECR(key string) (string, bool) {
+func (g *Godis) DECR(key string) (int, error) {
 	return g.DECRBY(key, 1)
 }
 
 // INCRBY increments the key by given value
-func (g *Godis) INCRBY(key string, n int) (string, bool) {
+func (g *Godis) INCRBY(key string, n int) (int, error) {
 	if got, _ := g.EXISTS(key); got == 0 {
 		g.SET(key, "0")
 	}
 	val, err := g.GET(key)
 	if err == nil {
 		valInt, convErr := strconv.Atoi(val)
-		if convErr == nil {
-			valInt += n
-			g.SET(key, strconv.Itoa(valInt))
-			return strconv.Itoa(valInt), false
+		if convErr != nil {
+			return 0, errors.New("typemismatch")
 		}
+		valInt += n
+		g.SET(key, strconv.Itoa(valInt))
+		return valInt, nil
 	}
-	return "", true
+	return 0, errors.New("keynotexists")
 }
 
 // DECRBY decrements the key by given value
-func (g *Godis) DECRBY(key string, n int) (string, bool) {
+func (g *Godis) DECRBY(key string, n int) (int, error) {
 	return g.INCRBY(key, -n)
 }
 
