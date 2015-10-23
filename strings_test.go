@@ -197,9 +197,9 @@ func TestDECRBYString(t *testing.T) {
 	n := 3
 	key := "foo"
 	db.SET(key, "string value")
-	_, err := db.DECRBY(key, n)
-	if !err {
-		t.Errorf("DECRBY(%q, %d) == %t, want %t", key, n, err, true)
+	got, err := db.DECRBY(key, n)
+	if err.Error() != "typemismatch" {
+		t.Errorf("DECRBY(%q, %d) == %d, %v want 0, typemismatch", key, n, got, err)
 	}
 }
 
