@@ -108,7 +108,7 @@ func TestINCR(t *testing.T) {
 		db.SET(c.key, c.value)
 		got, _ := db.INCR(c.key)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want + 1)
+		wantStr := want + 1
 		if got != wantStr {
 			t.Errorf("INCR(%q) == %s, want %s", c.key, got, wantStr)
 		}
