@@ -155,11 +155,11 @@ func TestINCRBY(t *testing.T) {
 	n := 3
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.INCRBY(c.key, n)
+		got, err := db.INCRBY(c.key, n)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want + n)
-		if got != wantStr {
-			t.Errorf("INCRBY(%q) == %s, want %s", c.key, got, wantStr)
+		want += n
+		if got != want {
+			t.Errorf("INCRBY(%q) == %s, %v want %s, <nil>", c.key, got, err, want)
 		}
 	}
 }
