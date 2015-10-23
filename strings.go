@@ -70,7 +70,7 @@ func (g *Godis) INCRBY(key string, n int) (string, bool) {
 		g.SET(key, "0")
 	}
 	val, err := g.GET(key)
-	if !err {
+	if err == nil {
 		valInt, convErr := strconv.Atoi(val)
 		if convErr == nil {
 			valInt += n
@@ -91,7 +91,7 @@ func (g *Godis) MGET(keys ...string) []interface{} {
 	var output []interface{} // will be strings or nils
 	for _, key := range keys {
 		value, err := g.GET(key)
-		if !err {
+		if err != nil {
 			output = append(output, value)
 		} else {
 			// if the key isn't available, append a nil instead
@@ -121,7 +121,7 @@ func (g *Godis) MSET(items ...string) bool {
 //An error is returned when key holds a non-string value.
 func (g *Godis) STRLEN(key string) (int64, error) {
 	val, err := g.GET(key)
-	if err {
+	if err.Error() == "keynotfound" {
 		return 0, errors.New("keynotfound")
 	}
 	if reflect.ValueOf(val).Kind() != reflect.String {
