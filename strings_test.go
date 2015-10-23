@@ -24,8 +24,8 @@ func TestGET(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 		got, err := db.GET(c.key)
-		if !err && got != c.value {
-			t.Errorf("GET(%q) == %q, want %q", c.key, got, c.value)
+		if err != nil && got != c.value {
+			t.Errorf("GET(%q) == %q, %v want %q, <nil>", c.key, got, err, c.value)
 		}
 	}
 }
