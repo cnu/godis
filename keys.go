@@ -32,7 +32,7 @@ func (g *Godis) RENAME(key, newKey string) (string, error) {
 	if key == newKey {
 		return "", errors.New("samekeys")
 	}
-	if got, _ := g.EXISTS(key); got== 0 {
+	if got, _ := g.EXISTS(key); got == 0 {
 		return "", errors.New("keynotexists")
 	}
 	if got, _ := g.EXISTS(newKey); got > 0 {
