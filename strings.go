@@ -79,7 +79,6 @@ func (g *Godis) INCRBY(key string, n int) (int, error) {
 		g.SET(key, strconv.Itoa(valInt))
 		return valInt, nil
 	}
-	return 0, errors.New("keynotexists")
 }
 
 // DECRBY decrements the key by given value
