@@ -24,12 +24,12 @@ func (g *Godis) SET(key string, value string) (string, error) {
 }
 
 // GET returns the value stored for a key
-func (g *Godis) GET(key string) (string, bool) {
+func (g *Godis) GET(key string) (string, error) {
 	s, exists := g.getSDS(key)
 	if exists {
-		return s.get(), false
+		return s.get(), nil
 	}
-	return "", true
+	return "", errors.New("keynotexists")
 }
 
 // SETEX is used to assign a value to a key and destroy it within its given
