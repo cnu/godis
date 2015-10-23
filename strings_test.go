@@ -34,10 +34,10 @@ func TestGET(t *testing.T) {
 func TestGETNotEXISTS(t *testing.T) {
 	db := setUp()
 	key := "not exists"
-	_, err := db.GET(key)
-	if !err {
+	got, err := db.GET(key)
+	if err.Error() != "keynotexists" {
 		// Means the key exists
-		t.Errorf("GET(%q) == %t, want %t", key, false, true)
+		t.Errorf("GET(%q) == %s, %v want %s, keynotexists", key, got, err, "")
 	}
 }
 
