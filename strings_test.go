@@ -49,7 +49,7 @@ func TestMGET(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 	}
-	got := db.MGET(testKeys...)
+	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
 		if got[i] != want[i] {
 			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
@@ -95,9 +95,9 @@ func TestMGETFewNotExists(t *testing.T) {
 func TestMSET(t *testing.T) {
 	tests := []string{"key1", "value1", "key2", "value2", "key3", "value3"}
 	db := setUp()
-	got := db.MSET(tests...)
-	if got != true {
-		t.Errorf("MSET(%q) == %t, want %t", tests, got, true)
+	got, err := db.MSET(tests...)
+	if got != true && err != nil {
+		t.Errorf("MSET(%q) == %t, %v want %t, <nil>", tests, got, err, true)
 	}
 }
 
