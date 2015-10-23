@@ -170,9 +170,9 @@ func TestINCRBYString(t *testing.T) {
 	n := 3
 	key := "foo"
 	db.SET(key, "string value")
-	_, err := db.INCRBY(key, n)
-	if !err {
-		t.Errorf("INCRBY(%q, %d) == %t, want %t", key, n, err, true)
+	got, err := db.INCRBY(key, n)
+	if err.Error() != "typemismatch" {
+		t.Errorf("INCRBY(%q, %d) == %d, %v want 0, typemismatch", key, n, got, err)
 	}
 }
 
