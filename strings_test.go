@@ -51,7 +51,7 @@ func TestMGET(t *testing.T) {
 	}
 	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if got[i] != want[i] {
+		if got[i] != want[i] && err != nil {
 			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
 		}
 	}
@@ -64,9 +64,9 @@ func TestMGETNotExists(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 	}
-	got := db.MGET(testKeys...)
+	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if got[i] != nil {
+		if got[i] != nil && err != nil {
 			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
 		}
 	}
@@ -80,12 +80,12 @@ func TestMGETFewNotExists(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 	}
-	got := db.MGET(testKeys...)
+	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if i == 1 && got[i] != nil {
+		if i == 1 && got[i] != nil && err != nil {
 			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
 		}
-		if i != 1 && got[i] != want[i] {
+		if i != 1 && got[i] != want[i] && err != nil {
 			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
 		}
 	}
