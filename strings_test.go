@@ -118,9 +118,10 @@ func TestINCR(t *testing.T) {
 // Test incrementing non-existent keys
 func TestINCRNonExists(t *testing.T) {
 	db := setUp()
-	got, _ := db.INCR("non-incr-key")
-	if got != "1" {
-		t.Errorf("INCR(%q) == %s, want %s", "non-incr-key", got, "1")
+	key := "non-incr-key"
+	got, err := db.INCR(key)
+	if err.Error() != "keynotexists" {
+		t.Errorf("INCR(%q) == %s, %v want %d, keynotexists", key, got, err, 0)
 	}
 }
 
