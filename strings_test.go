@@ -142,9 +142,10 @@ func TestDECR(t *testing.T) {
 // Test decrementing non-existent keys
 func TestDECRNonExists(t *testing.T) {
 	db := setUp()
-	got, _ := db.DECR("non-decr-key")
-	if got != "-1" {
-		t.Errorf("DECR(%q) == %s, want %s", "non-decr-key", got, "-1")
+	key := "non-incr-key"
+	got, err := db.DECR(key)
+	if err.Error() != "keynotexists" {
+		t.Errorf("DECR(%q) == %s, %v want %d, keynotexists", key, got, err, 0)
 	}
 }
 
