@@ -130,11 +130,11 @@ func TestDECR(t *testing.T) {
 	db := setUp()
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.DECR(c.key)
+		got, err := db.DECR(c.key)
 		want, _ := strconv.Atoi(c.value)
 		want -= 1
-		if got != wantStr {
-			t.Errorf("DECR(%q) == %s, want %s", c.key, got, wantStr)
+		if got != want {
+			t.Errorf("DECR(%q) == %s, %v want %s, <nil>", c.key, got, err, want)
 		}
 	}
 }
