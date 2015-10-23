@@ -91,7 +91,7 @@ func (g *Godis) MGET(keys ...string) []interface{} {
 	var output []interface{} // will be strings or nils
 	for _, key := range keys {
 		value, err := g.GET(key)
-		if err != nil {
+		if err == nil {
 			output = append(output, value)
 		} else {
 			// if the key isn't available, append a nil instead
