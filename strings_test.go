@@ -106,11 +106,11 @@ func TestINCR(t *testing.T) {
 	db := setUp()
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.INCR(c.key)
+		got, err := db.INCR(c.key)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := want + 1
-		if got != wantStr {
-			t.Errorf("INCR(%q) == %s, want %s", c.key, got, wantStr)
+		want += 1
+		if got != want {
+			t.Errorf("INCR(%q) == %s, %v want %s, <nil>", c.key, got, err, want)
 		}
 	}
 }
