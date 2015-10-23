@@ -182,11 +182,11 @@ func TestDECRBY(t *testing.T) {
 	n := 3
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.DECRBY(c.key, n)
+		got, err := db.DECRBY(c.key, n)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want - n)
-		if got != wantStr {
-			t.Errorf("DECRBY(%q) == %s, want %s", c.key, got, wantStr)
+		want -= n
+		if got != want {
+			t.Errorf("DECRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
