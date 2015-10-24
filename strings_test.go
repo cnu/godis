@@ -134,7 +134,7 @@ func TestDECR(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want -= 1
 		if got != want {
-			t.Errorf("DECR(%q) == %s, %v want %s, <nil>", c.key, got, err, want)
+			t.Errorf("DECR(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
@@ -159,7 +159,7 @@ func TestINCRBY(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want += n
 		if got != want {
-			t.Errorf("INCRBY(%q) == %s, %v want %s, <nil>", c.key, got, err, want)
+			t.Errorf("INCRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
@@ -230,7 +230,7 @@ func TestSETEXWithinExp(t *testing.T) {
 	time.Sleep(time.Duration(exp-1) * time.Second)
 	res, _ := db.EXISTS(key)
 	if res != 1 {
-		t.Errorf("SETEX(%q, %d, %v) == %d, <nil> want %d, <nil>", key, exp, val, got, 1)
+		t.Errorf("SETEX(%q, %d, %v) == %s, <nil> want %s, <nil>", key, exp, val, got, key)
 	}
 }
 
