@@ -123,7 +123,7 @@ func (g *Godis) MSET(items ...string) (bool, error) {
 //An error is returned when key holds a non-string value.
 func (g *Godis) STRLEN(key string) (int64, error) {
 	val, err := g.GET(key)
-	if err.Error() == "keynotfound" {
+	if err != nil && err.Error() == "keynotfound" {
 		return 0, errors.New("keynotfound")
 	}
 	if reflect.ValueOf(val).Kind() != reflect.String {
