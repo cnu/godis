@@ -110,7 +110,7 @@ func TestINCR(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want += 1
 		if got != want {
-			t.Errorf("INCR(%q) == %s, %v want %s, <nil>", c.key, got, err, want)
+			t.Errorf("INCR(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
