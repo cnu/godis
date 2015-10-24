@@ -120,8 +120,8 @@ func TestINCRNonExists(t *testing.T) {
 	db := setUp()
 	key := "non-incr-key"
 	got, err := db.INCR(key)
-	if err.Error() != "keynotexists" {
-		t.Errorf("INCR(%q) == %s, %v want %d, keynotexists", key, got, err, 0)
+	if got != 1 {
+		t.Errorf("INCR(%q) == %d, %v want %d, <nil>", key, got, err, 1)
 	}
 }
 
@@ -144,8 +144,8 @@ func TestDECRNonExists(t *testing.T) {
 	db := setUp()
 	key := "non-incr-key"
 	got, err := db.DECR(key)
-	if err.Error() != "keynotexists" {
-		t.Errorf("DECR(%q) == %s, %v want %d, keynotexists", key, got, err, 0)
+	if got != -1 {
+		t.Errorf("DECR(%q) == %d, %v want %d, <nil>", key, got, err, -1)
 	}
 }
 
