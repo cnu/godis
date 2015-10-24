@@ -66,19 +66,20 @@ func (g *Godis) DECR(key string) (int, error) {
 
 // INCRBY increments the key by given value
 func (g *Godis) INCRBY(key string, n int) (int, error) {
-	if got, _ := g.EXISTS(key); got == 0 {
+	var val string
+	var err error
+	val, err = g.GET(key)
+	if val == "" || err != nil {
 		g.SET(key, "0")
+		val, _ = g.GET(key)
 	}
-	val, err := g.GET(key)
-	if err == nil {
-		valInt, convErr := strconv.Atoi(val)
-		if convErr != nil {
-			return 0, errors.New("typemismatch")
-		}
-		valInt += n
-		g.SET(key, strconv.Itoa(valInt))
-		return valInt, nil
+	valInt, convErr := strconv.Atoi(val)
+	if convErr != nil {
+		return 0, errors.New("typemismatch")
 	}
+	valInt += n
+	g.SET(key, strconv.Itoa(valInt))
+	return valInt, nil
 }
 
 // DECRBY decrements the key by given value
