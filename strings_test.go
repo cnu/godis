@@ -365,8 +365,8 @@ func TestSTRLENWithoutKey(t *testing.T) {
 	db := setUp()
 	key := "mykey"
 	got, err := db.STRLEN(key)
-	if err.Error() != "keynotfound" {
-		t.Errorf("STRLEN(%q) == %v,%v want 0,keynotfound", key, got, err)
+	if err.Error() != "keynotexists" {
+		t.Errorf("STRLEN(%q) == %v,%v want 0,keynotexists", key, got, err)
 	}
 }
 
