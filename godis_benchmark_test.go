@@ -33,7 +33,7 @@ func BenchmarkEXISTS(b *testing.B) {
 
 	// run the EXISTS method b.N times
 	for n := 0; n < b.N; n++ {
-		_ = db.EXISTS("key")
+		_, _ = db.EXISTS("key")
 	}
 }
 
@@ -46,6 +46,6 @@ func BenchmarkDEL(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Not an accurate measure as we can't DEL a key without setting it
 		db.SET("key", "value")
-		_ = db.DEL("key")
+		_, _ = db.DEL("key")
 	}
 }

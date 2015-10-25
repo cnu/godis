@@ -12,32 +12,32 @@ func TestEXISTS(t *testing.T) {
 
 	// one existent key
 	key := "key1"
-	if got := db.EXISTS(key); got != 1 {
-		t.Errorf("EXISTS(%q) == %v, want %d", key, got, 1)
+	if got, err := db.EXISTS(key); got != 1 {
+		t.Errorf("EXISTS(%q) == %v, %v want %d, <nil>", key, got, err, 1)
 	}
 
 	// one non-existent key
 	notEXISTSKey := "not-exists"
-	if got := db.EXISTS(notEXISTSKey); got != 0 {
-		t.Errorf("EXISTS(%q) == %v, want %v", notEXISTSKey, got, 0)
+	if got, err := db.EXISTS(notEXISTSKey); got != 0 {
+		t.Errorf("EXISTS(%q) == %v, %v want %v, <nil>", notEXISTSKey, got, err, 0)
 	}
 
 	// all existent keys
 	keys := []string{"key1", "key2", "key 3"}
-	if got := db.EXISTS(keys...); got != len(keys) {
-		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, len(keys))
+	if got, err := db.EXISTS(keys...); got != len(keys) {
+		t.Errorf("EXISTS(%q) == %d, %v want %d, <nil>", keys, got, err, len(keys))
 	}
 
 	// two existent keys and one non-existent keys
 	keys = []string{"key1", "key2", "foo"}
-	if got := db.EXISTS(keys...); got != 2 {
-		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, 2)
+	if got, err := db.EXISTS(keys...); got != 2 {
+		t.Errorf("EXISTS(%q) == %d, %v want %d, <nil>", keys, got, err, 2)
 	}
 
 	// all non existent keys
 	keys = []string{"foo", "bar", "baz"}
-	if got := db.EXISTS(keys...); got != 0 {
-		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, 0)
+	if got, err := db.EXISTS(keys...); got != 0 {
+		t.Errorf("EXISTS(%q) == %d, %v want %d, <nil>", keys, got, err, 0)
 	}
 
 }
@@ -50,49 +50,50 @@ func TestDEL(t *testing.T) {
 
 	// DEL a key which exists
 	key := "மொழி"
-	got := db.DEL(key)
+	got, err := db.DEL(key)
 	if got != 1 {
-		t.Errorf("DEL(%q) == %d, want %d", key, got, 1)
+		t.Errorf("DEL(%q) == %d, %v want %d, <nil>", key, got, err, 1)
 	}
 
 	// DEL a key which doesn't exist
 	key = "foo"
-	got = db.DEL(key)
+	got, err = db.DEL(key)
 	if got != 0 {
-		t.Errorf("DEL(%q) == %d, want %d", key, got, 0)
+		t.Errorf("DEL(%q) == %d, %v want %d, <nil>", key, got, err, 0)
 	}
 
 	// DEL a list of keys which all exist
 	removeKeys := []string{"key1", "key 3"}
-	got = db.DEL(removeKeys...)
+	got, err = db.DEL(removeKeys...)
 	if got != len(removeKeys) {
-		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, len(removeKeys))
+		t.Errorf("DEL(%q) == %d, %v want %d, <nil>", removeKeys, got, err, len(removeKeys))
 	}
 
 	// DEL a list of keys which has one non-existent key
 	removeKeys = []string{"key2", "not-exists"}
-	got = db.DEL(removeKeys...)
+	got, err = db.DEL(removeKeys...)
 	if got != 1 {
-		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 1)
+		t.Errorf("DEL(%q) == %d, %v want %d, <nil>", removeKeys, got, err, 1)
 	}
 
 	// DEL a list of keys which has all non-existent keys
 	removeKeys = []string{"foo", "bar", "baz"}
-	got = db.DEL(removeKeys...)
+	got, err = db.DEL(removeKeys...)
 	if got != 0 {
-		t.Errorf("DEL(%q) == %d, want %d", removeKeys, got, 0)
+		t.Errorf("DEL(%q) == %d, %v, want %d, <nil>", removeKeys, got, err, 0)
 	}
 }
 
-// Test RENAME with different key and newKey
+// Test RENAME with different, key and newKey
 func TestRENAME(t *testing.T) {
 	db := setUp()
 	key := "myKey"
 	newKey := "hisKey"
 	db.SET(key, "value")
-	res := db.RENAME(key, newKey)
-	if res != newKey {
-		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	db.RENAME(key, newKey)
+	got, err := db.GET(newKey)
+	if got != "value" || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", newKey, got, err, "value")
 	}
 }
 
@@ -102,9 +103,12 @@ func TestRENAMESameKeys(t *testing.T) {
 	key := "myKey"
 	newKey := "myKey"
 	db.SET(key, "value")
-	res := db.RENAME(key, newKey)
-	if res != false {
-		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAME(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(samekeys)
+	if err.Error() != "samekeys" {
+		t.Errorf("RENAME(%q, %q) == %q, %v want %q, samekeys", key, newKey, got,
+			err, got)
 	}
 }
 
@@ -113,9 +117,12 @@ func TestRENAMENonExistant(t *testing.T) {
 	db := setUp()
 	key := "myKey"
 	newKey := "hisKey"
-	res := db.RENAME(key, newKey)
-	if res != false {
-		t.Errorf("RENAME(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAME(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(keynotexists)
+	if err.Error() != "keynotexists" {
+		t.Errorf("RENAME(%q, %q) == %q, %v want %q, keynotexists", key, newKey,
+			got, err, got)
 	}
 }
 
@@ -126,9 +133,10 @@ func TestRENAMENewKeyExist(t *testing.T) {
 	newKey := "hisKey"
 	db.SET(key, "value")
 	db.SET(newKey, "somevalue")
-	res := db.RENAME(key, newKey)
-	if res != newKey {
-		t.Errorf("RENAME(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	db.RENAME(key, newKey)
+	got, err := db.GET(newKey)
+	if got != "value" || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", newKey, got, err, "value")
 	}
 }
 
@@ -138,9 +146,10 @@ func TestRENAMENX(t *testing.T) {
 	key := "myKey"
 	newKey := "hisKey"
 	db.SET(key, "value")
-	res := db.RENAMENX(key, newKey)
-	if res != newKey {
-		t.Errorf("RENAMENX(%s, %s) == %v, want %s", key, newKey, res, newKey)
+	db.RENAMENX(key, newKey)
+	got, err := db.GET(newKey)
+	if got != "value" || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", newKey, got, err, "value")
 	}
 }
 
@@ -150,9 +159,12 @@ func TestRENAMENXSameKeys(t *testing.T) {
 	key := "myKey"
 	newKey := "myKey"
 	db.SET(key, "value")
-	res := db.RENAMENX(key, newKey)
-	if res != false {
-		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAMENX(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(samekeys)
+	if err.Error() != "samekeys" {
+		t.Errorf("RENAMENX(%q, %q) == %q, %v want %q, samekeys", key, newKey, got,
+			err, got)
 	}
 }
 
@@ -161,9 +173,12 @@ func TestRENAMENXNonExistant(t *testing.T) {
 	db := setUp()
 	key := "myKey"
 	newKey := "hisKey"
-	res := db.RENAMENX(key, newKey)
-	if res != false {
-		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAMENX(key, newKey)
+	// TODO : Check whether the error is returned as simple string or enclosed by
+	// error(keynotexists)
+	if err.Error() != "keynotexists" {
+		t.Errorf("RENAMENX(%q, %q) == %q, %v want %q, keynotexists", key, newKey,
+			got, err, got)
 	}
 }
 
@@ -174,9 +189,10 @@ func TestRENAMENXNewKeyExist(t *testing.T) {
 	newKey := "hisKey"
 	db.SET(key, "value")
 	db.SET(newKey, "somevalue")
-	res := db.RENAMENX(key, newKey)
-	if res != false {
-		t.Errorf("RENAMENX(%s, %s) == %v, want %t", key, newKey, res, false)
+	got, err := db.RENAMENX(key, newKey)
+	if err.Error() != "newkeyexists" {
+		t.Errorf("RENAMENX(%q, %q) == %q, %v want \"\", newkeyexists", key, newKey,
+			got, err)
 	}
 }
 
@@ -187,15 +203,17 @@ func TestRANDOMKEY(t *testing.T) {
 		"key5", "val5", "key6", "val6", "key7", "val7", "key8", "val8")
 	got, err := db.RANDOMKEY()
 	if err != nil {
-		t.Errorf("RANDOMKEY() == %v,%v want %v,<nil>", got, err, got)
+		t.Errorf("RANDOMKEY() == %q, %v want %q, <nil>", got, err, got)
 	}
 }
 
 // Test RANDOMKEY for non-existant db
+// TODO : RANDOMKEY should return "" instead of <nil>
+// with emptydb error
 func TestRANDOMKEYNonExistant(t *testing.T) {
 	db := setUp()
 	got, err := db.RANDOMKEY()
 	if err.Error() != "emptydb" {
-		t.Errorf("RANDOMKEY() == %v,%v want %v,emptydb", got, err, got)
+		t.Errorf("RANDOMKEY() == %q,%v want %q,emptydb", got, err, got)
 	}
 }

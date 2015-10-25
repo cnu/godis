@@ -11,9 +11,9 @@ func TestSET(t *testing.T) {
 
 	db := setUp()
 	for _, c := range cases {
-		got := db.SET(c.key, c.value)
-		if got != c.key {
-			t.Errorf("SET(%q) == %q, want %q", c.key, got, c.key)
+		got, err := db.SET(c.key, c.value)
+		if got != c.key || err != nil {
+			t.Errorf("SET(%q, %v) == %q, %v want %q, <nil>", c.key, c.value, got, err, c.key)
 		}
 	}
 }
@@ -24,8 +24,8 @@ func TestGET(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 		got, err := db.GET(c.key)
-		if !err && got != c.value {
-			t.Errorf("GET(%q) == %q, want %q", c.key, got, c.value)
+		if err != nil || got != c.value {
+			t.Errorf("GET(%q) == %q, %v want %q, <nil>", c.key, got, err, c.value)
 		}
 	}
 }
@@ -34,10 +34,10 @@ func TestGET(t *testing.T) {
 func TestGETNotEXISTS(t *testing.T) {
 	db := setUp()
 	key := "not exists"
-	_, err := db.GET(key)
-	if !err {
+	got, err := db.GET(key)
+	if err.Error() != "keynotexists" {
 		// Means the key exists
-		t.Errorf("GET(%q) == %t, want %t", key, false, true)
+		t.Errorf("GET(%q) == %q, %v want %q, keynotexists", key, got, err, "")
 	}
 }
 
@@ -49,10 +49,10 @@ func TestMGET(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 	}
-	got := db.MGET(testKeys...)
+	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if got[i] != want[i] {
-			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
+		if got[i] != want[i] || err != nil {
+			t.Errorf("MGET(%q) == %q, %v want %q, <nil>", key, got[i], err, want[i])
 		}
 	}
 }
@@ -64,10 +64,10 @@ func TestMGETNotExists(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 	}
-	got := db.MGET(testKeys...)
+	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if got[i] != nil {
-			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
+		if got[i] != nil || err != nil {
+			t.Errorf("MGET(%q) == %v, %v want %v, <nil>", key, got[i], err, nil)
 		}
 	}
 }
@@ -80,13 +80,13 @@ func TestMGETFewNotExists(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 	}
-	got := db.MGET(testKeys...)
+	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
 		if i == 1 && got[i] != nil {
-			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
+			t.Errorf("MGET(%q) == %q, %v want %p, <nil>", key, got[i], err, nil)
 		}
 		if i != 1 && got[i] != want[i] {
-			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
+			t.Errorf("MGET(%q) == %q, %v want %q, <nil>", key, got[i], err, want[i])
 		}
 	}
 }
@@ -95,9 +95,9 @@ func TestMGETFewNotExists(t *testing.T) {
 func TestMSET(t *testing.T) {
 	tests := []string{"key1", "value1", "key2", "value2", "key3", "value3"}
 	db := setUp()
-	got := db.MSET(tests...)
-	if got != true {
-		t.Errorf("MSET(%q) == %t, want %t", tests, got, true)
+	got, err := db.MSET(tests...)
+	if got != true || err != nil {
+		t.Errorf("MSET(%q) == %t, %v want %t, <nil>", tests, got, err, true)
 	}
 }
 
@@ -106,11 +106,11 @@ func TestINCR(t *testing.T) {
 	db := setUp()
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.INCR(c.key)
+		got, err := db.INCR(c.key)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want + 1)
-		if got != wantStr {
-			t.Errorf("INCR(%q) == %s, want %s", c.key, got, wantStr)
+		want += 1
+		if got != want {
+			t.Errorf("INCR(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
@@ -118,9 +118,10 @@ func TestINCR(t *testing.T) {
 // Test incrementing non-existent keys
 func TestINCRNonExists(t *testing.T) {
 	db := setUp()
-	got, _ := db.INCR("non-incr-key")
-	if got != "1" {
-		t.Errorf("INCR(%q) == %s, want %s", "non-incr-key", got, "1")
+	key := "non-incr-key"
+	got, err := db.INCR(key)
+	if got != 1 {
+		t.Errorf("INCR(%q) == %d, %v want %d, <nil>", key, got, err, 1)
 	}
 }
 
@@ -129,11 +130,11 @@ func TestDECR(t *testing.T) {
 	db := setUp()
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.DECR(c.key)
+		got, err := db.DECR(c.key)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want - 1)
-		if got != wantStr {
-			t.Errorf("DECR(%q) == %s, want %s", c.key, got, wantStr)
+		want -= 1
+		if got != want {
+			t.Errorf("DECR(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
@@ -141,9 +142,10 @@ func TestDECR(t *testing.T) {
 // Test decrementing non-existent keys
 func TestDECRNonExists(t *testing.T) {
 	db := setUp()
-	got, _ := db.DECR("non-decr-key")
-	if got != "-1" {
-		t.Errorf("DECR(%q) == %s, want %s", "non-decr-key", got, "-1")
+	key := "non-incr-key"
+	got, err := db.DECR(key)
+	if got != -1 {
+		t.Errorf("DECR(%q) == %d, %v want %d, <nil>", key, got, err, -1)
 	}
 }
 
@@ -153,11 +155,11 @@ func TestINCRBY(t *testing.T) {
 	n := 3
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.INCRBY(c.key, n)
+		got, err := db.INCRBY(c.key, n)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want + n)
-		if got != wantStr {
-			t.Errorf("INCRBY(%q) == %s, want %s", c.key, got, wantStr)
+		want += n
+		if got != want {
+			t.Errorf("INCRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
@@ -168,9 +170,9 @@ func TestINCRBYString(t *testing.T) {
 	n := 3
 	key := "foo"
 	db.SET(key, "string value")
-	_, err := db.INCRBY(key, n)
-	if !err {
-		t.Errorf("INCRBY(%q, %d) == %t, want %t", key, n, err, true)
+	got, err := db.INCRBY(key, n)
+	if err.Error() != "typemismatch" {
+		t.Errorf("INCRBY(%q, %d) == %d, %v want 0, typemismatch", key, n, got, err)
 	}
 }
 
@@ -180,11 +182,11 @@ func TestDECRBY(t *testing.T) {
 	n := 3
 	for _, c := range integers {
 		db.SET(c.key, c.value)
-		got, _ := db.DECRBY(c.key, n)
+		got, err := db.DECRBY(c.key, n)
 		want, _ := strconv.Atoi(c.value)
-		wantStr := strconv.Itoa(want - n)
-		if got != wantStr {
-			t.Errorf("DECRBY(%q) == %s, want %s", c.key, got, wantStr)
+		want -= n
+		if got != want {
+			t.Errorf("DECRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
 		}
 	}
 }
@@ -195,9 +197,9 @@ func TestDECRBYString(t *testing.T) {
 	n := 3
 	key := "foo"
 	db.SET(key, "string value")
-	_, err := db.DECRBY(key, n)
-	if !err {
-		t.Errorf("DECRBY(%q, %d) == %t, want %t", key, n, err, true)
+	got, err := db.DECRBY(key, n)
+	if err.Error() != "typemismatch" {
+		t.Errorf("DECRBY(%q, %d) == %d, %v want 0, typemismatch", key, n, got, err)
 	}
 }
 
@@ -226,9 +228,9 @@ func TestSETEXWithinExp(t *testing.T) {
 	db := setUp()
 	db.SETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp-1) * time.Second)
-	got := db.EXISTS(key)
-	if got != 1 {
-		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 1)
+	got, err := db.GET(key)
+	if got != val || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", key, got, err, val)
 	}
 }
 
@@ -240,9 +242,9 @@ func TestSETEXAfterExp(t *testing.T) {
 	db := setUp()
 	db.SETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp+1) * time.Second)
-	got := db.EXISTS(key)
-	if got != 0 {
-		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 0)
+	got, err := db.GET(key)
+	if got != "" || err.Error() != "keynotexists" {
+		t.Errorf("GET(%q) == %q, %v want \"\", keynotexists", key, got, err)
 	}
 }
 
@@ -252,9 +254,9 @@ func TestSETEXWithZero(t *testing.T) {
 	val := "some value"
 	exp := 0
 	db := setUp()
-	_, err := db.SETEX(key, uint64(exp), val)
+	got, err := db.SETEX(key, uint64(exp), val)
 	if err == nil {
-		t.Errorf("SETEX(%q, %d) == nil, want Error(\"invalid expire time in SETEX\")", key, exp)
+		t.Errorf("SETEX(%q, %d, %q) == %q, %v want \"\", badexpiry", key, exp, val, got, err)
 	}
 }
 
@@ -266,9 +268,9 @@ func TestPSETEXWithinExp(t *testing.T) {
 	db := setUp()
 	db.PSETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp-10) * time.Millisecond)
-	got := db.EXISTS(key)
-	if got != 1 {
-		t.Errorf("PSETEX(%q, %d) == %d, want %d", key, exp, got, 1)
+	got, err := db.GET(key)
+	if got != val || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", key, got, err, val)
 	}
 }
 
@@ -280,9 +282,9 @@ func TestPSETEXAfterExp(t *testing.T) {
 	db := setUp()
 	db.PSETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp+10) * time.Millisecond)
-	got := db.EXISTS(key)
-	if got != 0 {
-		t.Errorf("PSETEX(%q) == %d, want %d", key, got, 0)
+	got, err := db.GET(key)
+	if got != "" || err.Error() != "keynotexists" {
+		t.Errorf("GET(%q) == %q, %v want \"\", keynotexists", key, got, err)
 	}
 }
 
@@ -292,9 +294,9 @@ func TestPSETEXWithZero(t *testing.T) {
 	val := "some value"
 	exp := 0
 	db := setUp()
-	_, err := db.PSETEX(key, uint64(exp), val)
+	got, err := db.PSETEX(key, uint64(exp), val)
 	if err == nil {
-		t.Errorf("PSETEX(%q, %d) == nil, want Error(\"invalid expire time in PSETEX\")", key, exp)
+		t.Errorf("PSETEX(%q, %d, %q) == %q, %v want \"\", badexpiry", key, exp, val, got, err)
 	}
 }
 
@@ -306,7 +308,7 @@ func TestSTRLENWithInt(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 5 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 5)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 5)
 	}
 }
 
@@ -318,7 +320,7 @@ func TestSTRLENWithFloat(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 11 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 11)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 11)
 	}
 }
 
@@ -330,7 +332,7 @@ func TestSTRLENWithLong(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 43 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 43)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 43)
 	}
 }
 
@@ -342,7 +344,7 @@ func TestSTRLENWithStr(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 58 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 58)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 58)
 	}
 }
 
@@ -354,7 +356,7 @@ func TestSTRLENWithoutVal(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 0 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 0)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 0)
 	}
 }
 
@@ -363,8 +365,8 @@ func TestSTRLENWithoutKey(t *testing.T) {
 	db := setUp()
 	key := "mykey"
 	got, err := db.STRLEN(key)
-	if err.Error() != "keynotfound" {
-		t.Errorf("STRLEN(%q) == %v,%v want 0,keynotfound", key, got, err)
+	if err.Error() != "keynotexists" {
+		t.Errorf("STRLEN(%q) == %v,%v want 0,keynotexists", key, got, err)
 	}
 }
 
