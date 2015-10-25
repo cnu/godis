@@ -82,11 +82,11 @@ func TestMGETFewNotExists(t *testing.T) {
 	}
 	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if i == 1 && got[i] != nil && err != nil {
-			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
+		if i == 1 && got[i] != nil {
+			t.Errorf("MGET(%q) == %q, %v want %p, <nil>", key, got[i], err, nil)
 		}
-		if i != 1 && got[i] != want[i] && err != nil {
-			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
+		if i != 1 && got[i] != want[i] {
+			t.Errorf("MGET(%q) == %q, %v want %q, <nil>", key, got[i], err, want[i])
 		}
 	}
 }
