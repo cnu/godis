@@ -11,6 +11,6 @@ func TestDBSIZE(t *testing.T) {
 		"5", "mykey6", "6", "mykey7", "7", "mykey8", "8", "mykey9", "9")
 	got, err := db.DBSIZE()
 	if err != nil || got != 10 {
-		t.Errorf("DBSIZE() == %v,%v want 10,<nil>", got, err)
+		t.Errorf("DBSIZE() == %v, %v want 10, <nil>", got, err)
 	}
 }
