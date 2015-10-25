@@ -37,7 +37,7 @@ func TestGETNotEXISTS(t *testing.T) {
 	got, err := db.GET(key)
 	if err.Error() != "keynotexists" {
 		// Means the key exists
-		t.Errorf("GET(%q) == %s, %v want %s, keynotexists", key, got, err, "")
+		t.Errorf("GET(%q) == %q, %v want %q, keynotexists", key, got, err, "")
 	}
 }
 
