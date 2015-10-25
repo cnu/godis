@@ -12,8 +12,8 @@ func TestSET(t *testing.T) {
 	db := setUp()
 	for _, c := range cases {
 		got, err := db.SET(c.key, c.value)
-		if got != c.key || err != nil {
-			t.Errorf("SET(%q) == %q, want %q", c.key, got, c.key)
+		if got != c.key || err == nil {
+			t.Errorf("SET(%q, %v) == %q, %v want %q, <nil>", c.key, c.value, got, err, c.key)
 		}
 	}
 }
