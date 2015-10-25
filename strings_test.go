@@ -96,7 +96,7 @@ func TestMSET(t *testing.T) {
 	tests := []string{"key1", "value1", "key2", "value2", "key3", "value3"}
 	db := setUp()
 	got, err := db.MSET(tests...)
-	if got != true && err != nil {
+	if got != true || err != nil {
 		t.Errorf("MSET(%q) == %t, %v want %t, <nil>", tests, got, err, true)
 	}
 }
