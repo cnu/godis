@@ -282,9 +282,9 @@ func TestPSETEXAfterExp(t *testing.T) {
 	db := setUp()
 	db.PSETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp+10) * time.Millisecond)
-	got, _ := db.EXISTS(key)
-	if got != 0 {
-		t.Errorf("PSETEX(%q) == %d, want %d", key, got, 0)
+	got, err := db.GET(key)
+	if got != "" || err.Error() != "keynotexists" {
+		t.Errorf("GET(%q) == %q, %v want \"\", keynotexists", key, got, err)
 	}
 }
 
