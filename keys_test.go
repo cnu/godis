@@ -90,10 +90,10 @@ func TestRENAME(t *testing.T) {
 	key := "myKey"
 	newKey := "hisKey"
 	db.SET(key, "value")
-	got, err := db.RENAME(key, newKey)
-	if err != nil {
-		t.Errorf("RENAME(%q, %q) == %q, %v want %q, <nil>", key, newKey, got,
-			err, newKey)
+	db.RENAME(key, newKey)
+	got, err := db.GET(newKey)
+	if got != "value" || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", newKey, got, err, "value")
 	}
 }
 
