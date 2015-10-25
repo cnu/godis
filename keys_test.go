@@ -12,32 +12,32 @@ func TestEXISTS(t *testing.T) {
 
 	// one existent key
 	key := "key1"
-	if got, _ := db.EXISTS(key); got != 1 {
-		t.Errorf("EXISTS(%q) == %v, want %d", key, got, 1)
+	if got, err := db.EXISTS(key); got != 1 {
+		t.Errorf("EXISTS(%q) == %v, %v want %d, <nil>", key, got, err, 1)
 	}
 
 	// one non-existent key
 	notEXISTSKey := "not-exists"
-	if got, _ := db.EXISTS(notEXISTSKey); got != 0 {
-		t.Errorf("EXISTS(%q) == %v, want %v", notEXISTSKey, got, 0)
+	if got, err := db.EXISTS(notEXISTSKey); got != 0 {
+		t.Errorf("EXISTS(%q) == %v, %v want %v, <nil>", notEXISTSKey, got, err, 0)
 	}
 
 	// all existent keys
 	keys := []string{"key1", "key2", "key 3"}
-	if got, _ := db.EXISTS(keys...); got != len(keys) {
-		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, len(keys))
+	if got, err := db.EXISTS(keys...); got != len(keys) {
+		t.Errorf("EXISTS(%q) == %d, %v want %d, <nil>", keys, got, err, len(keys))
 	}
 
 	// two existent keys and one non-existent keys
 	keys = []string{"key1", "key2", "foo"}
-	if got, _ := db.EXISTS(keys...); got != 2 {
-		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, 2)
+	if got, err := db.EXISTS(keys...); got != 2 {
+		t.Errorf("EXISTS(%q) == %d, %v want %d, <nil>", keys, got, err, 2)
 	}
 
 	// all non existent keys
 	keys = []string{"foo", "bar", "baz"}
-	if got, _ := db.EXISTS(keys...); got != 0 {
-		t.Errorf("EXISTS(%q) == %d, want %d", keys, got, 0)
+	if got, err := db.EXISTS(keys...); got != 0 {
+		t.Errorf("EXISTS(%q) == %d, %v want %d, <nil>", keys, got, err, 0)
 	}
 
 }
