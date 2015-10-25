@@ -308,7 +308,7 @@ func TestSTRLENWithInt(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 5 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 5)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 5)
 	}
 }
 
