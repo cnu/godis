@@ -320,7 +320,7 @@ func TestSTRLENWithFloat(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 11 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 11)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 11)
 	}
 }
 
@@ -332,7 +332,7 @@ func TestSTRLENWithLong(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 43 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 43)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 43)
 	}
 }
 
@@ -344,7 +344,7 @@ func TestSTRLENWithStr(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 58 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 58)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 58)
 	}
 }
 
@@ -356,7 +356,7 @@ func TestSTRLENWithoutVal(t *testing.T) {
 	db.SET(key, val)
 	got, err := db.STRLEN(key)
 	if err != nil || got != 0 {
-		t.Errorf("STRLEN(%q) == %d, want %d", key, got, 0)
+		t.Errorf("STRLEN(%q) == %d, %v want %d, <nil>", key, got, err, 0)
 	}
 }
 
