@@ -66,8 +66,8 @@ func TestMGETNotExists(t *testing.T) {
 	}
 	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if got[i] != nil && err != nil {
-			t.Errorf("MGET(%q) == %q, want %p", key, got[i], nil)
+		if got[i] != nil || err != nil {
+			t.Errorf("MGET(%q) == %v, %v want %v, <nil>", key, got[i], err, nil)
 		}
 	}
 }
