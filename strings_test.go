@@ -254,9 +254,9 @@ func TestSETEXWithZero(t *testing.T) {
 	val := "some value"
 	exp := 0
 	db := setUp()
-	_, err := db.SETEX(key, uint64(exp), val)
+	got, err := db.SETEX(key, uint64(exp), val)
 	if err == nil {
-		t.Errorf("SETEX(%q, %d) == nil, want Error(\"invalid expire time in SETEX\")", key, exp)
+		t.Errorf("SETEX(%q, %d, %q) == %q, %v want \"\", badexpiry", key, exp, val, got, err)
 	}
 }
 
