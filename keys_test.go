@@ -203,7 +203,7 @@ func TestRANDOMKEY(t *testing.T) {
 		"key5", "val5", "key6", "val6", "key7", "val7", "key8", "val8")
 	got, err := db.RANDOMKEY()
 	if err != nil {
-		t.Errorf("RANDOMKEY() == %v,%v want %v,<nil>", got, err, got)
+		t.Errorf("RANDOMKEY() == %q, %v want %q, <nil>", got, err, got)
 	}
 }
 
@@ -212,6 +212,6 @@ func TestRANDOMKEYNonExistant(t *testing.T) {
 	db := setUp()
 	got, err := db.RANDOMKEY()
 	if err.Error() != "emptydb" {
-		t.Errorf("RANDOMKEY() == %v,%v want %v,emptydb", got, err, got)
+		t.Errorf("RANDOMKEY() == %q,%v want %q,emptydb", got, err, got)
 	}
 }
