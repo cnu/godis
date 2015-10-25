@@ -242,9 +242,9 @@ func TestSETEXAfterExp(t *testing.T) {
 	db := setUp()
 	db.SETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp+1) * time.Second)
-	got, _ := db.EXISTS(key)
-	if got != 0 {
-		t.Errorf("SETEX(%q, %d) == %d, want %d", key, exp, got, 0)
+	got, err := db.GET(key)
+	if got != "" || err.Error() != "keynotexists" {
+		t.Errorf("GET(%q) == %q, %v want \"\", keynotexists", key, got, err)
 	}
 }
 
