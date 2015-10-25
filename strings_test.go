@@ -268,9 +268,9 @@ func TestPSETEXWithinExp(t *testing.T) {
 	db := setUp()
 	db.PSETEX(key, uint64(exp), val)
 	time.Sleep(time.Duration(exp-10) * time.Millisecond)
-	got, _ := db.EXISTS(key)
-	if got != 1 {
-		t.Errorf("PSETEX(%q, %d) == %d, want %d", key, exp, got, 1)
+	got, err := db.GET(key)
+	if got != val || err != nil {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", key, got, err, val)
 	}
 }
 
