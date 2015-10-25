@@ -12,7 +12,7 @@ func TestSET(t *testing.T) {
 	db := setUp()
 	for _, c := range cases {
 		got, err := db.SET(c.key, c.value)
-		if got != c.key || err == nil {
+		if got != c.key || err != nil {
 			t.Errorf("SET(%q, %v) == %q, %v want %q, <nil>", c.key, c.value, got, err, c.key)
 		}
 	}
@@ -24,7 +24,7 @@ func TestGET(t *testing.T) {
 	for _, c := range cases {
 		db.SET(c.key, c.value)
 		got, err := db.GET(c.key)
-		if err != nil && got != c.value {
+		if err != nil || got != c.value {
 			t.Errorf("GET(%q) == %q, %v want %q, <nil>", c.key, got, err, c.value)
 		}
 	}
