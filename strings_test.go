@@ -294,9 +294,9 @@ func TestPSETEXWithZero(t *testing.T) {
 	val := "some value"
 	exp := 0
 	db := setUp()
-	_, err := db.PSETEX(key, uint64(exp), val)
+	got, err := db.PSETEX(key, uint64(exp), val)
 	if err == nil {
-		t.Errorf("PSETEX(%q, %d) == nil, want Error(\"invalid expire time in PSETEX\")", key, exp)
+		t.Errorf("PSETEX(%q, %d, %q) == %q, %v want \"\", badexpiry", key, exp, val, got, err)
 	}
 }
 
