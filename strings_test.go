@@ -51,8 +51,8 @@ func TestMGET(t *testing.T) {
 	}
 	got, err := db.MGET(testKeys...)
 	for i, key := range testKeys {
-		if got[i] != want[i] && err != nil {
-			t.Errorf("MGET(%q) == %q, want %q", key, got[i], want[i])
+		if got[i] != want[i] || err != nil {
+			t.Errorf("MGET(%q) == %q, %v want %q, <nil>", key, got[i], err, want[i])
 		}
 	}
 }
