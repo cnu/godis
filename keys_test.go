@@ -208,6 +208,8 @@ func TestRANDOMKEY(t *testing.T) {
 }
 
 // Test RANDOMKEY for non-existant db
+// TODO : RANDOMKEY should return "" instead of <nil>
+// with emptydb error
 func TestRANDOMKEYNonExistant(t *testing.T) {
 	db := setUp()
 	got, err := db.RANDOMKEY()
