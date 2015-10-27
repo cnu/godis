@@ -131,3 +131,22 @@ func (g *Godis) STRLEN(key string) (int64, error) {
 	}
 	return int64(utf8.RuneCountInString(val)), nil
 }
+
+// If key already exists and is a string, this command appends the value at the end
+// of the string. If key does not exist it is created and set as an empty string.
+func (g *Godis) APPEND(key string, val string) (int64, error) {
+	exst, _ := g.EXISTS(key)
+	if exst == 0 {
+		g.SET(key, val)
+		ln, _ := g.STRLEN(key)
+		return ln, nil
+	}
+	got, _ := g.GET(key)
+	if reflect.ValueOf(got).Kind() != reflect.String {
+		return 0, errors.New("typemismatch")
+	}
+	newVal := got + val
+	g.SET(key, newVal)
+	ln, _ := g.STRLEN(key)
+	return ln, nil
+}
