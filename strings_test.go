@@ -370,4 +370,19 @@ func TestSTRLENWithoutKey(t *testing.T) {
 	}
 }
 
+// APPEND should return length of the string after concatenating strings if key
+// exists.
+func TestAPPENDKeyExists(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "Hello "
+	toAppend := "World"
+	db.SET(key, val)
+	got, err := db.APPEND(key, toAppend)
+	if err != nil || got != 11 {
+		t.Errorf("APPEND(%q, %q) == %d, %v want %d, <nil>", key, toAppend, got,
+			err, 11)
+	}
+}
+
 // TODO : Write test cases for STRLEN in type mismatch after data structs are done.
