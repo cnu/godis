@@ -385,4 +385,17 @@ func TestAPPENDKeyExists(t *testing.T) {
 	}
 }
 
+// APPEND should SET the key, return length of its value if key
+// does not yet exist.
+func TestAPPENDKeyNotExists(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	toAppend := "Hello"
+	got, err := db.APPEND(key, toAppend)
+	if err != nil || got != 5 {
+		t.Errorf("APPEND(%q, %q) == %d, %v want %d, <nil>", key, toAppend, got,
+			err, 5)
+	}
+}
+
 // TODO : Write test cases for STRLEN in type mismatch after data structs are done.
