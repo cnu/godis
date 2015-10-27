@@ -421,4 +421,19 @@ func TestAPPENDLongValue(t *testing.T) {
 	}
 }
 
+// Use GET to check the APPENDed values
+func TestAPPENDGetValues(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "Hello "
+	toAppend := "World"
+	db.SET(key, val)
+	db.APPEND(key, toAppend)
+	got, err := db.GET(key)
+	want := val + toAppend
+	if err != nil || got != want {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", key, got, err, want)
+	}
+}
+
 // TODO : Write tests for APPEND to check typemismatch after data structs are done.
