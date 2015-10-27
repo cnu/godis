@@ -370,6 +370,8 @@ func TestSTRLENWithoutKey(t *testing.T) {
 	}
 }
 
+// TODO : Write test cases for STRLEN in type mismatch after data structs are done.
+
 // APPEND should return length of the string after concatenating strings if key
 // exists.
 func TestAPPENDKeyExists(t *testing.T) {
@@ -398,4 +400,23 @@ func TestAPPENDKeyNotExists(t *testing.T) {
 	}
 }
 
-// TODO : Write test cases for STRLEN in type mismatch after data structs are done.
+// Test APPEND for a long string
+func TestAPPENDLongValue(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := `1234567891234567891234567891234567891234567891234567891234567891234567
+	89123456789123456789123456789123456789123456789123456789123456789123456789
+	123456789123456789123456789123456789123456789123456789123456789123456789
+	123456789123456789`
+	toAppend := `abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz
+	abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz
+	abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz
+	abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz`
+	db.SET(key, val)
+	//Length returned by APPEND includes line breaks as its multi line string
+	got, err := db.APPEND(key, toAppend)
+	if err != nil || got != 521 {
+		t.Errorf("APPEND(%q, %q) == %d, %v want %d, <nil>", key, toAppend, got,
+			err, 521)
+	}
+}
