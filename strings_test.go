@@ -371,3 +371,69 @@ func TestSTRLENWithoutKey(t *testing.T) {
 }
 
 // TODO : Write test cases for STRLEN in type mismatch after data structs are done.
+
+// APPEND should return length of the string after concatenating strings if key
+// exists.
+func TestAPPENDKeyExists(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "Hello "
+	toAppend := "World"
+	db.SET(key, val)
+	got, err := db.APPEND(key, toAppend)
+	if err != nil || got != 11 {
+		t.Errorf("APPEND(%q, %q) == %d, %v want %d, <nil>", key, toAppend, got,
+			err, 11)
+	}
+}
+
+// APPEND should SET the key, return length of its value if key
+// does not yet exist.
+func TestAPPENDKeyNotExists(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	toAppend := "Hello"
+	got, err := db.APPEND(key, toAppend)
+	if err != nil || got != 5 {
+		t.Errorf("APPEND(%q, %q) == %d, %v want %d, <nil>", key, toAppend, got,
+			err, 5)
+	}
+}
+
+// Test APPEND for a long string
+func TestAPPENDLongValue(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := `1234567891234567891234567891234567891234567891234567891234567891234567
+	89123456789123456789123456789123456789123456789123456789123456789123456789
+	123456789123456789123456789123456789123456789123456789123456789123456789
+	123456789123456789`
+	toAppend := `abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz
+	abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz
+	abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz
+	abcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxzabcdefghijklmnopqrstuvwxz`
+	db.SET(key, val)
+	//Length returned by APPEND includes line breaks as its multi line string
+	got, err := db.APPEND(key, toAppend)
+	if err != nil || got != 521 {
+		t.Errorf("APPEND(%q, %q) == %d, %v want %d, <nil>", key, toAppend, got,
+			err, 521)
+	}
+}
+
+// Use GET to check the APPENDed values
+func TestAPPENDGetValues(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	val := "Hello "
+	toAppend := "World"
+	db.SET(key, val)
+	db.APPEND(key, toAppend)
+	got, err := db.GET(key)
+	want := val + toAppend
+	if err != nil || got != want {
+		t.Errorf("GET(%q) == %q, %v want %q, <nil>", key, got, err, want)
+	}
+}
+
+// TODO : Write tests for APPEND to check typemismatch after data structs are done.
