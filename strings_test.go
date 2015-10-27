@@ -420,3 +420,5 @@ func TestAPPENDLongValue(t *testing.T) {
 			err, 521)
 	}
 }
+
+// TODO : Write tests for APPEND to check typemismatch after data structs are done.
