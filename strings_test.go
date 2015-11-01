@@ -235,6 +235,18 @@ func TestINCRBYFLOAT(t *testing.T) {
 	}
 }
 
+// Test incrementing values for a string value
+func TestINCRBYFLOATString(t *testing.T) {
+	db := setUp()
+	n := 312.12345
+	key := "foo"
+	db.SET(key, "string value")
+	got, err := db.INCRBYFLOAT(key, n)
+	if err.Error() != "typemismatch" {
+		t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want 0, typemismatch", key, n, got, err)
+	}
+}
+
 func TestSETEXWithinExp(t *testing.T) {
 	// One second before expiry time
 	key := "mykey"
