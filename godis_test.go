@@ -32,6 +32,8 @@ var floats = []Case{
 	{"flt64", "22423234.1223"},
 	{"flt32", "443.21"},
 	{"fltExp", "123.34e23"},
+	{"negative", "-123.34e23"},
+	{"zero", "0"},
 }
 
 // var strings = []Case{
