@@ -230,7 +230,8 @@ func TestINCRBYFLOAT(t *testing.T) {
 		want, _ := strconv.ParseFloat(c.value, 64)
 		want += n
 		if got != want {
-			t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want %f, <nil>", c.key, n, got, err, want)
+			t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want %f, <nil>", c.key, n,
+				got, err, want)
 		}
 	}
 }
@@ -243,7 +244,20 @@ func TestINCRBYFLOATString(t *testing.T) {
 	db.SET(key, "string value")
 	got, err := db.INCRBYFLOAT(key, n)
 	if err.Error() != "typemismatch" {
-		t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want 0, typemismatch", key, n, got, err)
+		t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want 0, typemismatch",
+			key, n, got, err)
+	}
+}
+
+// Test incrementing values for given key by n for non existing key
+func TestINCRBYFLOATNonExists(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	n := 3.40e43
+	got, err := db.INCRBYFLOAT(key, n)
+	if got != n {
+		t.Errorf("INCRBYFLOAT(%q, %e) == %e, %v want %e, <nil>", key, n, got,
+			err, n)
 	}
 }
 
