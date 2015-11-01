@@ -159,7 +159,7 @@ func TestINCRBY(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want += n
 		if got != want {
-			t.Errorf("INCRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
+			t.Errorf("INCRBY(%q, %d) == %d, %v want %d, <nil>", c.key, n, got, err, want)
 		}
 	}
 }
@@ -186,7 +186,7 @@ func TestDECRBY(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want -= n
 		if got != want {
-			t.Errorf("DECRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
+			t.Errorf("DECRBY(%q, %d) == %d, %v want %d, <nil>", c.key, n, got, err, want)
 		}
 	}
 }
@@ -230,7 +230,7 @@ func TestINCRBYFLOAT(t *testing.T) {
 		want, _ := strconv.ParseFloat(c.value, 64)
 		want += n
 		if got != want {
-			t.Errorf("INCRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
+			t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want %f, <nil>", c.key, n, got, err, want)
 		}
 	}
 }
