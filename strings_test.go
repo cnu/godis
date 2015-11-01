@@ -220,6 +220,21 @@ func TestINCRmismatchs(t *testing.T) {
     }
 }*/
 
+// Test incrementing values for given key by n
+func TestINCRBYFLOAT(t *testing.T) {
+	db := setUp()
+	n := 3.40002154
+	for _, c := range floats {
+		db.SET(c.key, c.value)
+		got, err := db.INCRBYFLOAT(c.key, n)
+		want, _ := strconv.ParseFloat(c.value, 64)
+		want += n
+		if got != want {
+			t.Errorf("INCRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
+		}
+	}
+}
+
 func TestSETEXWithinExp(t *testing.T) {
 	// One second before expiry time
 	key := "mykey"
