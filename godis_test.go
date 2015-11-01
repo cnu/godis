@@ -28,10 +28,11 @@ var integers = []Case{
 	{"zero", "0"},
 }
 
-// var floats = []Case{
-// 	{"float64", 22423234.1223},
-// 	{"float", 443.21},
-// }
+var floats = []Case{
+	{"flt64", "22423234.1223"},
+	{"flt32", "443.21"},
+	{"fltExp", "123.34e23"},
+}
 
 // var strings = []Case{
 // 	{"மொழி", "தமிழ்"}, // value with string
