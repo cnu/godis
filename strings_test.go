@@ -159,7 +159,7 @@ func TestINCRBY(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want += n
 		if got != want {
-			t.Errorf("INCRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
+			t.Errorf("INCRBY(%q, %d) == %d, %v want %d, <nil>", c.key, n, got, err, want)
 		}
 	}
 }
@@ -186,7 +186,7 @@ func TestDECRBY(t *testing.T) {
 		want, _ := strconv.Atoi(c.value)
 		want -= n
 		if got != want {
-			t.Errorf("DECRBY(%q) == %d, %v want %d, <nil>", c.key, got, err, want)
+			t.Errorf("DECRBY(%q, %d) == %d, %v want %d, <nil>", c.key, n, got, err, want)
 		}
 	}
 }
@@ -219,6 +219,47 @@ func TestINCRmismatchs(t *testing.T) {
         }
     }
 }*/
+
+// Test incrementing values for given key by n
+func TestINCRBYFLOAT(t *testing.T) {
+	db := setUp()
+	n := 3.40002154
+	for _, c := range floats {
+		db.SET(c.key, c.value)
+		got, err := db.INCRBYFLOAT(c.key, n)
+		want, _ := strconv.ParseFloat(c.value, 64)
+		want += n
+		if got != want {
+			t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want %f, <nil>", c.key, n,
+				got, err, want)
+		}
+	}
+}
+
+// Test incrementing values for a string value
+func TestINCRBYFLOATString(t *testing.T) {
+	db := setUp()
+	n := 312.12345
+	key := "foo"
+	db.SET(key, "string value")
+	got, err := db.INCRBYFLOAT(key, n)
+	if err.Error() != "typemismatch" {
+		t.Errorf("INCRBYFLOAT(%q, %f) == %f, %v want 0, typemismatch",
+			key, n, got, err)
+	}
+}
+
+// Test incrementing values for given key by n for non existing key
+func TestINCRBYFLOATNonExists(t *testing.T) {
+	db := setUp()
+	key := "mykey"
+	n := 3.40e43
+	got, err := db.INCRBYFLOAT(key, n)
+	if got != n {
+		t.Errorf("INCRBYFLOAT(%q, %e) == %e, %v want %e, <nil>", key, n, got,
+			err, n)
+	}
+}
 
 func TestSETEXWithinExp(t *testing.T) {
 	// One second before expiry time

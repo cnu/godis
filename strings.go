@@ -87,6 +87,26 @@ func (g *Godis) DECRBY(key string, n int) (int, error) {
 	return g.INCRBY(key, -n)
 }
 
+// Increment the string representing a floating point number stored at key by the
+//specified increment. If the key does not exist, it is set to 0 before
+//performing the operation.
+func (g *Godis) INCRBYFLOAT(key string, n float64) (float64, error) {
+	var val string
+	var err error
+	val, err = g.GET(key)
+	if val == "" || err != nil {
+		g.SET(key, "0")
+		val, _ = g.GET(key)
+	}
+	valFlt, convErr := strconv.ParseFloat(val, 64)
+	if convErr != nil {
+		return 0, errors.New("typemismatch")
+	}
+	valFlt += n
+	g.SET(key, strconv.FormatFloat(valFlt, 'E', -1, 64))
+	return valFlt, nil
+}
+
 // MGET returns a slice of values for a input slice of keys
 func (g *Godis) MGET(keys ...string) ([]interface{}, error) {
 	var output []interface{} // will be strings or nils
