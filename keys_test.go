@@ -1,6 +1,8 @@
 package godis
 
 import (
+	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -215,6 +217,23 @@ func TestRANDOMKEYNonExistant(t *testing.T) {
 	got, err := db.RANDOMKEY()
 	if err.Error() != "emptydb" {
 		t.Errorf("RANDOMKEY() == %q,%v want %q,emptydb", got, err, got)
+	}
+}
+
+// Test KEYS for given patterns
+func TestKEYS(t *testing.T) {
+	db := setUp()
+	db.MSET("hello", "1", "hallo", "2", "hullo", "3", "hyllo", "4", "hvllo", "5",
+		"heeeello", "6")
+	for _, p := range patterns {
+		pattern := p.regex
+		want := p.result
+		got, err := db.KEYS(pattern)
+		sort.Strings(want)
+		sort.Strings(got)
+		if !reflect.DeepEqual(got, want) || err != nil {
+			t.Errorf("KEYS(%q) == %v,%v want %v,<nil>", pattern, got, err, want)
+		}
 	}
 }
 
