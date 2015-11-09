@@ -9,6 +9,11 @@ type Case struct {
 	value string
 }
 
+type Pattern struct {
+	regex  string
+	result []string
+}
+
 var cases = []Case{
 	{"key1", "value1"},
 	{"key2", "value2"},
@@ -34,6 +39,16 @@ var floats = []Case{
 	{"fltExp", "123.34e23"},
 	{"negative", "-123.34e23"},
 	{"zero", "0"},
+}
+
+// Search patterns and expected results
+var patterns = []Pattern{
+	{"h?llo", []string{"hullo", "hyllo", "hvllo", "heeeello", "hello", "hallo"}},
+	{"hello", []string{"hello"}},
+	{"h[u-z]llo", []string{"hullo", "hvllo", "hyllo"}},
+	{"he*llo", []string{"hello", "heeeello"}},
+	{"h[ae]llo", []string{"hello", "hallo"}},
+	{"h[^e]llo", []string{"hullo", "hvllo", "hyllo", "hallo"}}
 }
 
 // var strings = []Case{
