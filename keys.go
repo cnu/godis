@@ -2,6 +2,7 @@ package godis
 
 import (
 	"errors"
+	"regexp"
 )
 
 // EXISTS returns in a key exists or not in the DB
@@ -76,4 +77,23 @@ func (g *Godis) RANDOMKEY() (*SDS, error) {
 	}
 	rnum := g.generateRandnum(len(keys))
 	return g.db[keys[rnum]], nil
+}
+
+// Returns all keys matching pattern.
+func (g *Godis) KEYS(pattern string) ([]string, error) {
+	allKeys := g.getAllKeys()
+	var matchs []string
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return matchs, errors.New("invalidregex")
+	}
+	if len(allKeys) == 0 {
+		return matchs, nil
+	}
+	for _, k := range allKeys {
+		if r.MatchString(k) {
+			matchs = append(matchs, k)
+		}
+	}
+	return matchs, nil
 }
