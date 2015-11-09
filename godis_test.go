@@ -48,7 +48,7 @@ var patterns = []Pattern{
 	{"h[u-z]llo", []string{"hullo", "hvllo", "hyllo"}},
 	{"he*llo", []string{"hello", "heeeello"}},
 	{"h[ae]llo", []string{"hello", "hallo"}},
-	{"h[^e]llo", []string{"hullo", "hvllo", "hyllo", "hallo"}}
+	{"h[^e]llo", []string{"hullo", "hvllo", "hyllo", "hallo"}},
 }
 
 // var strings = []Case{
