@@ -217,3 +217,14 @@ func TestRANDOMKEYNonExistant(t *testing.T) {
 		t.Errorf("RANDOMKEY() == %q,%v want %q,emptydb", got, err, got)
 	}
 }
+
+// Test KEYS for non-existant db,
+// should return empty slice
+func TestKEYSNonExistant(t *testing.T) {
+	db := setUp()
+	pattern := "h?llo"
+	got, err := db.KEYS(pattern)
+	if got != nil || err != nil {
+		t.Errorf("KEYS(%q) == %v,%v want %v,<nil>", pattern, got, err, got)
+	}
+}
