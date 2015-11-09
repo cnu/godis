@@ -30,7 +30,7 @@ func (g *Godis) destroyInMillis(key string, exp uint64) (int, error) {
 
 // Get all the keys in the entire database
 // TODO : Lock the whole db while getting its keys for consistant results?
-func (g *Godis) getAllKeys() ([]string, error) {
+func (g *Godis) getAllKeys() []string {
 	db := g.db
 	keys := make([]string, len(db))
 	if len(db) > 0 {
@@ -40,5 +40,5 @@ func (g *Godis) getAllKeys() ([]string, error) {
 			i++
 		}
 	}
-	return keys, nil
+	return keys
 }
