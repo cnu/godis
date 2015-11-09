@@ -239,7 +239,7 @@ func TestKEYS(t *testing.T) {
 
 // Test KEYS for non-existant db,
 // should return empty slice
-func TestKEYSNonExistant(t *testing.T) {
+func TestKEYSEmptyDB(t *testing.T) {
 	db := setUp()
 	pattern := "h?llo"
 	got, err := db.KEYS(pattern)
