@@ -216,7 +216,7 @@ func TestRANDOMKEYNonExistant(t *testing.T) {
 	db := setUp()
 	got, err := db.RANDOMKEY()
 	if err.Error() != "emptydb" {
-		t.Errorf("RANDOMKEY() == %q,%v want %q,emptydb", got, err, got)
+		t.Errorf("RANDOMKEY() == %q, %v want %q, emptydb", got, err, got)
 	}
 }
 
@@ -232,7 +232,7 @@ func TestKEYS(t *testing.T) {
 		sort.Strings(want)
 		sort.Strings(got)
 		if !reflect.DeepEqual(got, want) || err != nil {
-			t.Errorf("KEYS(%q) == %v,%v want %v,<nil>", pattern, got, err, want)
+			t.Errorf("KEYS(%q) == %v, %v want %v, <nil>", pattern, got, err, want)
 		}
 	}
 }
@@ -244,6 +244,17 @@ func TestKEYSEmptyDB(t *testing.T) {
 	pattern := "h?llo"
 	got, err := db.KEYS(pattern)
 	if got != nil || err != nil {
-		t.Errorf("KEYS(%q) == %v,%v want %v,<nil>", pattern, got, err, got)
+		t.Errorf("KEYS(%q) == %v, %v want %v, <nil>", pattern, got, err, got)
+	}
+}
+
+// Test KEYS for invalid regex patterns,
+// should return "invalidregex" error
+func TestKEYSInvalidRegex(t *testing.T) {
+	db := setUp()
+	pattern := "h?++llo"
+	got, err := db.KEYS(pattern)
+	if got != nil || err.Error() != "invalidregex" {
+		t.Errorf("KEYS(%q) == %v, %v want %v, invalidregex", pattern, got, err, got)
 	}
 }
