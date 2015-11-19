@@ -4,6 +4,9 @@ go:
  - 1.4.2
  - 1.5.1
  - release
+ - tip
+allow_failures:
+ - tip
 before_install:
  - go get github.com/axw/gocov/gocov
  - go get github.com/mattn/goveralls
